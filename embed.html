@@ -59,6 +59,18 @@
 #dak-potus .dak-av { position: relative; flex: 0 0 64px; width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600; font-size: 22px; letter-spacing: .02em; overflow: hidden; border: 3px solid #fff; box-shadow: 0 0 0 2px rgba(15,43,54,.25); }
 #dak-potus .dak-av img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
 #dak-potus .dak-elsub { font-size: 13px; color: #4A5A5F; }
+
+#dak-potus button.dak-elbtn { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 0; min-width: 0; margin: 4px 0 8px; padding: 0; border: 0; border-radius: 8px; background: transparent; text-align: left; cursor: pointer; color: inherit; }
+#dak-potus button.dak-elbtn:hover .dak-elected b { text-decoration: underline; }
+#dak-potus button.dak-elbtn:focus-visible { outline: 2px solid #6B9E78; outline-offset: 3px; }
+#dak-potus .dak-elbtn .dak-tx { display: block; }
+#dak-potus .dak-elbtn .dak-elected { display: block; margin: 0; }
+#dak-potus .dak-elbtn .dak-elsub { display: block; }
+#dak-potus .dak-bio { margin: 0 0 10px; padding: 12px 14px; border-left: 4px solid #6B9E78; background: #F4F7F4; border-radius: 0 8px 8px 0; font-size: 14px; line-height: 1.5; color: #0F2B36; }
+#dak-potus .dak-bio .dak-bh { font-size: 16px; font-weight: 600; margin: 0 0 2px; }
+#dak-potus .dak-bio .dak-bm { font-size: 13px; color: #4A5A5F; margin: 0 0 6px; }
+#dak-potus .dak-bio p { margin: 0 0 6px; }
+#dak-potus .dak-bio .dak-bs { font-size: 12px; color: #6b7280; margin: 4px 0 0; }
 @media (max-width: 700px) {
   #dak-potus .dak-hero { padding: 12px 12px 16px; gap: 12px; }
   #dak-potus .dak-hero .dak-flag { width: 58px; }
@@ -184,6 +196,24 @@
   }
 
 
+
+  var BIOS = {"abraham-lincoln":[1809,1865,"Kentucky","Republikanerne (Unionspartiet i 1864)","1861-1865","Advokat fra Illinois, som blev præsident lige før borgerkrigen. Han ledede Unionen gennem krigen og udstedte i 1863 Emancipationsproklamationen, der erklærede slaver i oprørsstaterne for frie. Han blev skudt af John Wilkes Booth den 14. april 1865 og døde dagen efter."],"ulysses-s-grant":[1822,1885,"Ohio","Republikanerne","1869-1877","Øverstkommanderende for Unionens hær i slutningen af borgerkrigen. Som præsident ledede han genopbygningen af Sydstaterne og greb ind mod Ku Klux Klan. Det 15. forfatningstillæg, der gav sorte mænd stemmeret, blev ratificeret i 1870."],"rutherford-b-hayes":[1822,1893,"Ohio","Republikanerne","1877-1881","Han vandt det omstridte valg i 1876 med 185 valgmandsstemmer mod 184 efter en kommissions afgørelse. I 1877 trak han de sidste føderale tropper ud af Sydstaterne, og genopbygningstiden sluttede. Han havde lovet kun at sidde én periode."],"james-a-garfield":[1831,1881,"Ohio","Republikanerne","1881","Tidligere unionsgeneral og kongresmedlem. Han blev skudt af Charles Guiteau den 2. juli 1881 og døde den 19. september efter knap 200 dage på posten, en af de korteste præsidentperioder."],"grover-cleveland":[1837,1908,"New Jersey","Demokraterne","1885-1889 og 1893-1897","Den første præsident med to perioder, der ikke fulgte efter hinanden (nr. 22 og 24). Han fik flest stemmer i 1888, men tabte på valgmænd til Benjamin Harrison. Hans anden periode blev præget af finanspaniken i 1893."],"benjamin-harrison":[1833,1901,"Ohio","Republikanerne","1889-1893","Barnebarn af præsident William Henry Harrison. Han vandt valget i 1888 på valgmænd, selvom Cleveland fik flest stemmer på landsplan. I hans tid blev Sherman Antitrust Act vedtaget i 1890, den første føderale lov mod monopoler."],"william-mckinley":[1843,1901,"Ohio","Republikanerne","1897-1901","Under hans ledelse vandt USA krigen mod Spanien i 1898 og fik blandt andet Puerto Rico, Guam og Filippinerne. Han holdt fast i guldfoden. Han blev skudt i Buffalo den 6. september 1901 og døde otte dage senere."],"theodore-roosevelt":[1858,1919,"New York","Republikanerne","1901-1909","Blev præsident, da McKinley blev dræbt, og vandt selv valget i 1904. Han var 42 år ved tiltrædelsen, den yngste der har overtaget embedet. Kendt for beskyttelsen af nationalparker, indsatsen mod store trusts og Panamakanalen. Han fik Nobels fredspris i 1906 og stillede i 1912 op for Det Progressive Parti."],"william-howard-taft":[1857,1930,"Ohio","Republikanerne","1909-1913","Roosevelts udvalgte efterfølger. Han tabte genvalget i 1912, hvor Republikanerne var splittet mellem ham og Roosevelt. Han var senere formand for USA's højesteret 1921-1930 og er den eneste, der har haft både præsidentposten og denne post."],"woodrow-wilson":[1856,1924,"Virginia","Demokraterne","1913-1921","Tidligere universitetsrektor og guvernør i New Jersey. Han førte USA ind i første verdenskrig i 1917 og foreslog Folkeforbundet, som USA dog ikke blev medlem af. Centralbanken Federal Reserve blev oprettet i 1913, og kvinders stemmeret blev ratificeret i 1920. Han fik Nobels fredspris i 1919."],"warren-g-harding":[1865,1923,"Ohio","Republikanerne","1921-1923","Valgt med løftet om en tilbagevenden til normale tider efter krigen. Han døde pludseligt i embedet i august 1923. Flere skandaler i hans regering, blandt andet Teapot Dome om olieleje, kom frem omkring og efter hans død."],"calvin-coolidge":[1872,1933,"Vermont","Republikanerne","1923-1929","Overtog posten som vicepræsident, da Harding døde, og blev selv valgt i 1924. Kendt for en tilbageholdende stil og lave statsudgifter. Han stillede ikke op igen i 1928."],"herbert-hoover":[1874,1964,"Iowa","Republikanerne","1929-1933","Ingeniør, der havde organiseret nødhjælp under og efter første verdenskrig. Aktiekrakket i 1929 og den store depression ramte kort efter, at han tiltrådte, og han tabte stort til Roosevelt i 1932."],"franklin-d-roosevelt":[1882,1945,"New York","Demokraterne","1933-1945","Den eneste præsident valgt fire gange. Han iværksatte New Deal mod depressionen og ledede USA gennem næsten hele anden verdenskrig. Han døde i embedet i april 1945, og i 1951 blev antallet af perioder begrænset til to (22. tillæg)."],"harry-s-truman":[1884,1972,"Missouri","Demokraterne","1945-1953","Blev præsident, da Roosevelt døde. Han besluttede at bruge atombomberne mod Hiroshima og Nagasaki i 1945. Marshallplanen, NATO og Koreakrigen faldt i hans tid. Han vandt overraskende valget i 1948."],"dwight-d-eisenhower":[1890,1969,"Texas","Republikanerne","1953-1961","Øverstkommanderende for de allierede styrker i Europa i anden verdenskrig. Som præsident afsluttede han kampene i Korea i 1953 og satte gang i motorvejsnettet i 1956. I 1957 sendte han tropper til Little Rock for at sikre, at sorte elever kunne gå i skole sammen med hvide."],"john-f-kennedy":[1917,1963,"Massachusetts","Demokraterne","1961-1963","Den yngste valgte præsident (43 år) og den første katolik i embedet. Han håndterede Cuba-krisen i 1962 og oprettede Fredskorpset. Han blev skudt i Dallas den 22. november 1963."],"lyndon-b-johnson":[1908,1973,"Texas","Demokraterne","1963-1969","Overtog efter Kennedy og vandt i 1964 med stor margin. Hans tid rummer Civil Rights Act (1964), Voting Rights Act (1965) og Medicare og Medicaid, men også optrapningen af Vietnamkrigen. I 1968 meddelte han, at han ikke ville stille op igen."],"richard-nixon":[1913,1994,"California","Republikanerne","1969-1974","Besøgte Kina i 1972 og indgik våbenaftaler med Sovjetunionen. De amerikanske kampstyrker forlod Vietnam i 1973. Watergate-skandalen førte til, at han trådte tilbage den 9. august 1974. Han er den eneste præsident, der er trådt tilbage."],"jimmy-carter":[1924,2024,"Georgia","Demokraterne","1977-1981","Tidligere guvernør i Georgia og jordnøddefarmer. Han formidlede Camp David-aftalen mellem Egypten og Israel i 1978. Gidselkrisen i Iran prægede hans sidste år. Han fik Nobels fredspris i 2002 og blev 100 år."],"ronald-reagan":[1911,2004,"Illinois","Republikanerne","1981-1989","Tidligere skuespiller og guvernør i Californien. Hans regering gennemførte skattelettelser og oprustning. I 1987 underskrev han en aftale om mellemdistanceraketter med Gorbatjov. Iran-Contra-affæren fik politiske følger. Han overlevede et attentat i 1981."],"george-h-w-bush":[1924,2018,"Massachusetts","Republikanerne","1989-1993","Tidligere vicepræsident og chef for CIA. Han ledede koalitionen i Golfkrigen i 1991, og Tysklands genforening skete i 1990. Sovjetunionen opløstes i 1991. Han tabte genvalget i 1992 til Clinton."],"bill-clinton":[1946,null,"Arkansas","Demokraterne","1993-2001","Tidligere guvernør i Arkansas. I hans tid kom NAFTA-aftalen, og de sidste år havde overskud på de offentlige budgetter. Repræsentanternes Hus stillede ham for en rigsret i 1998, men Senatet frikendte ham i 1999."],"george-w-bush":[1946,null,"Connecticut","Republikanerne","2001-2009","Tidligere guvernør i Texas. Han vandt i 2000 efter en omstridt optælling i Florida og en afgørelse i højesteret, selvom Gore fik flest stemmer på landsplan. Terrorangrebene den 11. september 2001 og krigene i Afghanistan og Irak prægede hans tid. Finanskrisen kom i 2008."],"barack-obama":[1961,null,"Hawaii","Demokraterne","2009-2017","Tidligere senator for Illinois og den første afroamerikanske præsident. Sundhedsreformen Affordable Care Act blev vedtaget i 2010. Osama bin Laden blev dræbt i 2011. Han fik Nobels fredspris i 2009."],"donald-trump":[1946,null,"New York","Republikanerne","2017-2021 og fra 2025","Erhvervsmand, der ikke havde haft noget politisk embede før præsidentposten. Han vandt i 2016 på valgmænd, selvom Clinton fik flest stemmer på landsplan. Repræsentanternes Hus stillede ham for en rigsret to gange, og Senatet frikendte ham begge gange. Efter valget i 2024 er han den anden præsident med to perioder, der ikke følger efter hinanden."],"joe-biden":[1942,null,"Pennsylvania","Demokraterne","2021-2025","Senator for Delaware 1973-2009 og vicepræsident under Obama. Han var 78 år ved tiltrædelsen, den ældste dengang. Under ham blev der vedtaget en stor infrastrukturlov (2021) og Inflation Reduction Act (2022). I juli 2024 trak han sig fra valgkampen."]};
+  var bioOpen = false;
+  function electedName(y) {
+    var tot = { D: 0, R: 0, O: 0 };
+    Object.keys(DATA[y]).forEach(function (k) { DATA[y][k].e.forEach(function (x) { tot[x[0]] += x[1]; }); });
+    var c = ['D', 'R', 'O'].sort(function (a, b) { return tot[b] - tot[a]; })[0];
+    return INFO[y].names[c];
+  }
+  function bioHtml(name, b) {
+    var yrs = YEARS.filter(function (y) { return electedName(y) === name; });
+    var life = b[0] + '-' + (b[1] || '');
+    return '<div class="dak-bh">' + name + '</div>' +
+      '<div class="dak-bm">' + (b[1] ? life : 'Født ' + b[0]) + ' &middot; født i ' + b[2] + ' &middot; ' + b[3] + '</div>' +
+      '<p>' + b[5] + '</p>' +
+      '<div class="dak-bs">Præsident: ' + b[4] + '. Valgt ved valgene i: ' + yrs.join(', ') + '.</div>';
+  }
+
   var PHOTOS = 'https://ai-michelklos.github.io/potus/billeder/';
   function slug(n) {
     return n.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
@@ -222,9 +252,11 @@
     var totAll = tot.D + tot.R + tot.O;
     var winCls = ['D', 'R', 'O'].sort(function (a, b) { return tot[b] - tot[a]; })[0];
     var winName = inf.names[winCls] || (pop[winCls] ? pop[winCls][0] : CLSNAME[winCls]);
-    var html = '<div class="dak-elwrap"><span class="dak-av" id="dak-potus-av" style="background:' + COLORS[winCls][2] + '" aria-hidden="true">' + initials(winName) + '</span>' +
-      '<div><div class="dak-elected">Valgt præsident: <b>' + winName + '</b>' + (inf.party[winCls] ? ' (' + inf.party[winCls] + ')' : '') + '</div>' +
-      '<div class="dak-elsub">Valgt ved præsidentvalget i ' + year + '</div></div></div>';
+    var bio = BIOS[slug(winName)];
+    var html = '<button type="button" class="dak-elbtn" id="dak-potus-elbtn"' + (bio ? ' aria-expanded="' + (bioOpen ? 'true' : 'false') + '" aria-controls="dak-potus-bio"' : '') + '><span class="dak-av" id="dak-potus-av" style="background:' + COLORS[winCls][2] + '" aria-hidden="true">' + initials(winName) + '</span>' +
+      '<span class="dak-tx"><span class="dak-elected">Valgt præsident: <b>' + winName + '</b>' + (inf.party[winCls] ? ' (' + inf.party[winCls] + ')' : '') + '</span>' +
+      '<span class="dak-elsub">Valgt ved præsidentvalget i ' + year + (bio ? ' &middot; tryk for biografi ' + (bioOpen ? '&#9652;' : '&#9662;') : '') + '</span></span></button>';
+    html += '<div class="dak-bio" id="dak-potus-bio"' + (bio && bioOpen ? '' : ' hidden') + '>' + (bio && bioOpen ? bioHtml(winName, bio) : '') + '</div>';
     html += '<div class="dak-evbar" role="img" aria-label="Fordeling af valgmænd">';
     ['D', 'O', 'R'].forEach(function (cls) {
       if (!tot[cls]) return;
@@ -245,6 +277,8 @@
     html += '</div>';
     legendEl.innerHTML = html;
     loadPortrait(winName);
+    var eb = legendEl.querySelector('#dak-potus-elbtn');
+    if (eb && bio) eb.addEventListener('click', function () { bioOpen = !bioOpen; renderLegend(); });
     var sh = '<span>Forskel i delstaten:</span>';
     var labels = ['under 5', '5-10', '10-20', 'over 20'];
     for (var i = 0; i < 4; i++) {
