@@ -71,12 +71,25 @@
 #dak-potus .dak-bio .dak-bm { font-size: 13px; color: #4A5A5F; margin: 0 0 6px; }
 #dak-potus .dak-bio p { margin: 0 0 6px; }
 #dak-potus .dak-bio .dak-bs { font-size: 12px; color: #6b7280; margin: 4px 0 0; }
+
+#dak-potus .dak-hist { margin: 16px 0 4px; padding: 14px 14px 12px; border: 1px solid #D8DDDA; border-radius: 10px; background: #FBFCFB; }
+#dak-potus .dak-hist .dak-hh { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin: 0 0 8px; }
+#dak-potus .dak-hist h2 { font-size: 19px; font-weight: 600; margin: 0; color: #0F2B36; }
+#dak-potus .dak-hist .dak-hsum { font-size: 14px; line-height: 1.5; color: #0F2B36; margin: 0 0 10px; }
+#dak-potus .dak-hist .dak-hsum p { margin: 0 0 4px; }
+#dak-potus .dak-strip { display: flex; flex-wrap: wrap; gap: 3px; }
+#dak-potus button.dak-sq { min-width: 0; min-height: 0; width: 30px; height: 30px; padding: 0; border: 0; border-radius: 4px; font-size: 11px; font-weight: 600; line-height: 1; cursor: pointer; }
+#dak-potus button.dak-sq.dak-cur { outline: 3px solid #0F2B36; outline-offset: 1px; position: relative; z-index: 1; }
+#dak-potus button.dak-sq.dak-none { background: #E8EBE8; color: #9AA5A0; cursor: default; }
+#dak-potus button.dak-sq.dak-leg { background: repeating-linear-gradient(45deg, #E8EBE8 0 4px, #F6F7F6 4px 8px); color: #6b7280; }
+#dak-potus .dak-hist .dak-hnote { font-size: 12px; color: #4A5A5F; margin: 8px 0 0; }
 @media (max-width: 700px) {
   #dak-potus .dak-hero { padding: 12px 12px 16px; gap: 12px; }
   #dak-potus .dak-hero .dak-flag { width: 58px; }
   #dak-potus .dak-hero h1 { font-size: 22px; }
   #dak-potus .dak-hero .dak-stars { display: none; }
   #dak-potus .dak-elected b { font-size: 18px; }
+  #dak-potus button.dak-sq { width: 26px; height: 26px; font-size: 10px; }
   #dak-potus .dak-av { flex-basis: 52px; width: 52px; height: 52px; font-size: 18px; }
   #dak-potus .dak-subtitle { font-size: 14px; }
   #dak-potus .dak-controls select { flex: 1 1 100%; order: 1; }
@@ -101,6 +114,12 @@
 <div class="dak-mapwrap" id="dak-potus-wrap">
   <svg id="dak-potus-svg" viewBox="0 0 960 600" role="img" aria-label="Kort over USA med resultatet af præsidentvalget i hver delstat"></svg>
   <div class="dak-tip" id="dak-potus-tip"></div>
+</div>
+<div class="dak-hist" id="dak-potus-hist">
+  <div class="dak-hh"><h2>Delstatens historie</h2><select id="dak-potus-hsel" aria-label="Vælg delstat"></select></div>
+  <div class="dak-hsum" id="dak-potus-hsum"></div>
+  <div class="dak-strip" id="dak-potus-strip"></div>
+  <div class="dak-hnote">Hvert felt er ét valg (årstal med to cifre). Tryk på et felt for at se det valg på kortet. Mørkere farve betyder større forskel i delstaten.</div>
 </div>
 <div class="dak-note">Farven viser, hvem der fik flest stemmer i delstaten, og jo mørkere farve, jo større forskel. Valgmænd er fordelt efter delstatens resultat, også for delstater hvor valgmændene i datidens regler ikke blev talt med (det fremgår af noten). Enkelte valgmænd har stemt anderledes end deres delstat, fx 7 i 2016, så de officielle totaler kan afvige med få stemmer. Maine og Nebraska fordeler en del af deres valgmænd efter kongresdistrikter, når data findes. Tryk eller hold musen over en delstat for detaljer.</div>
 <div class="dak-source">Kilde: Wikipedia, resultater pr. delstat (samlet i datasættet Margin Matters) &nbsp;|&nbsp; Grafik og databehandling: Danske A-kasser</div>
@@ -343,12 +362,69 @@
   }
   function hideTip() {
     tip.style.display = 'none';
-    if (selected) { var p = paths[selected]; if (p) p.classList.remove('dak-sel'); selected = null; }
   }
   function select(abbr) {
     if (selected && paths[selected]) paths[selected].classList.remove('dak-sel');
     selected = abbr;
     if (paths[abbr]) { paths[abbr].classList.add('dak-sel'); }
+    var hs = ROOT.querySelector('#dak-potus-hsel');
+    if (hs && hs.value !== abbr) hs.value = abbr;
+    renderHist();
+  }
+  function electedCls(y) {
+    var tot = { D: 0, R: 0, O: 0 };
+    Object.keys(DATA[y]).forEach(function (k) { DATA[y][k].e.forEach(function (x) { tot[x[0]] += x[1]; }); });
+    return ['D', 'R', 'O'].sort(function (a, b) { return tot[b] - tot[a]; })[0];
+  }
+  var HN = { D: 'demokraterne', R: 'republikanerne', O: 'andre kandidater' };
+  function renderHist() {
+    var abbr = selected; if (!abbr || !states[abbr]) return;
+    var seq = YEARS.map(function (y) {
+      var d = DATA[y]; var r = d[abbr] || d[abbr + '-AL'];
+      if (!r) return { y: y, none: true };
+      if (r.l) return { y: y, leg: true };
+      var cs = sortedCands(r); var m = cs.length > 1 ? cs[0][1] - cs[1][1] : 100;
+      return { y: y, cls: winClsOf(abbr, y), m: m, win: electedCls(y), name: cs[0][0] };
+    });
+    var votes = seq.filter(function (s) { return s.cls; });
+    var cnt = { D: 0, R: 0, O: 0 }, flips = 0, same = 0, run = null, best = null;
+    votes.forEach(function (s, i) {
+      cnt[s.cls]++;
+      if (s.cls === s.win) same++;
+      if (i > 0 && votes[i - 1].cls !== s.cls) flips++;
+      if (run && run.cls === s.cls) { run.len++; run.to = s.y; } else { run = { cls: s.cls, len: 1, from: s.y, to: s.y }; }
+      if (!best || run.len >= best.len) best = { cls: run.cls, len: run.len, from: run.from, to: run.to };
+    });
+    var h = '';
+    if (votes.length) {
+      var parts = [];
+      ['D', 'R', 'O'].forEach(function (c) { if (cnt[c] || c !== 'O') parts.push(HN[c] + ' ' + cnt[c] + (cnt[c] === 1 ? ' gang' : ' gange')); });
+      h += '<p><b>' + states[abbr].name + '</b> har siden ' + votes[0].y + ' stemt på ' + parts.join(', ').replace(/, ([^,]*)$/, ' og $1') + ' (' + votes.length + ' valg).</p>';
+      h += '<p>Delstaten skiftede vinder ' + flips + (flips === 1 ? ' gang' : ' gange') + ' og stemte som landet som helhed i ' + same + ' af ' + votes.length + ' valg.';
+      if (best && best.len > 1) h += ' Længste stribe: ' + HN[best.cls] + ' ' + best.from + '-' + best.to + ' (' + best.len + ' valg i træk).';
+      h += '</p>';
+    } else {
+      h += '<p><b>' + states[abbr].name + '</b> har ikke afgivet stemmer ved folkeafstemning i de valg, kortet dækker.</p>';
+    }
+    ROOT.querySelector('#dak-potus-hsum').innerHTML = h;
+    var strip = ROOT.querySelector('#dak-potus-strip'); strip.innerHTML = '';
+    seq.forEach(function (s) {
+      var b = document.createElement('button'); b.type = 'button';
+      var yy = String(s.y).slice(2);
+      b.textContent = yy;
+      b.className = 'dak-sq' + (s.none ? ' dak-none' : '') + (s.leg ? ' dak-leg' : '') + (s.y === year ? ' dak-cur' : '');
+      if (s.none) { b.title = s.y + ': deltog ikke'; b.setAttribute('aria-label', s.y + ': delstaten deltog ikke'); b.disabled = true; }
+      else if (s.leg) { b.title = s.y + ': valgmænd udpeget af delstatens parlament'; b.setAttribute('aria-label', b.title); }
+      else {
+        var idx = s.m < STEPS[0] ? 0 : s.m < STEPS[1] ? 1 : s.m < STEPS[2] ? 2 : 3;
+        b.style.background = COLORS[s.cls][idx];
+        b.style.color = idx >= 2 ? '#fff' : '#0F2B36';
+        b.title = s.y + ': ' + s.name + ', forskel ' + fmt1.format(s.m) + ' procentpoint';
+        b.setAttribute('aria-label', b.title);
+      }
+      if (!s.none) b.addEventListener('click', function () { year = s.y; paint(); });
+      strip.appendChild(b);
+    });
   }
 
 
@@ -417,6 +493,7 @@
     });
     renderLegend();
     renderChips();
+    if (selected) renderHist();
     ynoteEl.textContent = INFO[year].note || '';
     ynoteEl.style.display = INFO[year].note ? 'block' : 'none';
     var i = YEARS.indexOf(year);
@@ -487,8 +564,14 @@
     });
     yearSel.addEventListener('change', function () { year = Number(yearSel.value); paint(); });
     prevBtn.addEventListener('click', function () { var i = YEARS.indexOf(year); if (i > 0) { year = YEARS[i - 1]; paint(); } });
+    var hsel = ROOT.querySelector('#dak-potus-hsel');
+    Object.keys(states).sort(function (a, b) { return states[a].name.localeCompare(states[b].name, 'da'); }).forEach(function (a) {
+      var o = document.createElement('option'); o.value = a; o.textContent = states[a].name; hsel.appendChild(o);
+    });
+    hsel.addEventListener('change', function () { select(hsel.value); });
     playBtn.addEventListener('click', togglePlay);
     nextBtn.addEventListener('click', function () { var i = YEARS.indexOf(year); if (i < YEARS.length - 1) { year = YEARS[i + 1]; paint(); } });
+    selected = 'OH'; paths['OH'].classList.add('dak-sel'); hsel.value = 'OH';
     paint();
   }
 
