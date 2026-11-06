@@ -33,3 +33,4 @@ Filen skal hedde som herunder og være `.jpg`, `.png` eller `.webp`. Billedet be
 | `barack-obama` | Barack Obama | 2008, 2012 |
 | `donald-trump` | Donald Trump | 2016, 2024 |
 | `joe-biden` | Joe Biden | 2020 |
+| `gerald-ford` | Gerald Ford (aldrig valgt, vises i en note ved 1976) | 1976 |
