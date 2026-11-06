@@ -56,7 +56,7 @@
 #dak-potus .dak-evmark { position: relative; height: 16px; margin: 0 0 8px; font-size: 12px; color: #4A5A5F; }
 #dak-potus .dak-evmark span { position: absolute; left: 50%; transform: translateX(-50%); top: 0; white-space: nowrap; }
 #dak-potus .dak-evmark span::before { content: ""; position: absolute; left: 50%; top: -20px; height: 18px; border-left: 2px solid #0F2B36; }
-#dak-potus .dak-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-size: 14px; color: #0F2B36; margin: 0 0 6px; }
+#dak-potus .dak-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-size: 14px; color: #0F2B36; margin: 10px 0 12px; }
 #dak-potus .dak-chip { background: #F1F4F1; border: 1px solid #D8DDDA; border-radius: 999px; padding: 6px 12px; }
 #dak-potus .dak-chips label { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #3E4E53; min-height: 36px; cursor: pointer; }
 #dak-potus .dak-chips input { width: 18px; height: 18px; accent-color: #6B9E78; }
@@ -152,7 +152,6 @@
 <div class="dak-legend" id="dak-potus-legend"></div>
 <div class="dak-shades" id="dak-potus-shades"></div>
 <div class="dak-note" id="dak-potus-ynote" style="margin:0 0 8px"></div>
-<div class="dak-chips" id="dak-potus-chips"></div>
 <div class="dak-tools"><button type="button" id="dak-potus-img">Gem kortet som billede</button><button type="button" id="dak-potus-quizbtn" aria-expanded="false" aria-controls="dak-potus-quiz">Quiz: gæt vinderen</button><button type="button" id="dak-potus-link">Kopier link til dette valg</button><span id="dak-potus-toolmsg" role="status"></span></div>
 <div class="dak-quiz" id="dak-potus-quiz" hidden></div>
 <div class="dak-view" role="group" aria-label="Visning"><button type="button" id="dak-potus-vmap" aria-pressed="true">Kort</button><button type="button" id="dak-potus-vtile" aria-pressed="false">Fliser</button></div>
@@ -161,6 +160,7 @@
   <div class="dak-tiles" id="dak-potus-tiles"></div>
   <div class="dak-tip" id="dak-potus-tip"></div>
 </div>
+<div class="dak-chips" id="dak-potus-chips"></div>
 <div class="dak-hist" id="dak-potus-hist">
   <div class="dak-hh"><h2>Delstatens historie</h2><select id="dak-potus-hsel" aria-label="Vælg delstat"></select></div>
   <div class="dak-hsum" id="dak-potus-hsum"></div>
