@@ -87,7 +87,6 @@ body{margin:0;padding:12px 12px 32px}
     
   </div>
   <div class="tools">
-    <input id="k-q" type="search" placeholder="Søg, fx filibuster eller veto" aria-label="Søg i emnerne">
     <button id="k-open" type="button">Åbn alle</button>
     <button id="k-close" type="button">Luk alle</button>
     <button id="k-quizbtn" type="button" aria-expanded="false">Quiz: test din viden</button>
@@ -95,7 +94,6 @@ body{margin:0;padding:12px 12px 32px}
   <div class="qz" id="k-quiz" hidden></div>
   <p class="intro">Tryk på et emne for at åbne det. Under hvert emne kan du hoppe videre til beslægtede emner.</p>
   <div id="k-list"></div>
-  <div class="tomt" id="k-tomt">Ingen emner passer til din søgning.</div>
   <p class="kilde">Forklaringerne bygger på USA's forfatning, kongressens egne sider (congress.gov, house.gov og senate.gov) og Højesterettens side (supremecourt.gov). Tal om de nuværende flertal ændrer sig efter hvert valg, så tjek dem hos kongressens egne sider eller en nyhedstjeneste, hvis du skal bruge dem.</p>
   <div class="toast" id="k-toast" role="status"></div>
 </div>
@@ -159,18 +157,12 @@ G.forEach(function(g){
 });
 function all(){return [].slice.call(list.querySelectorAll('details'))}
 function openId(id,scroll){var d=document.getElementById('e-'+id);if(!d)return;
- var q=document.getElementById('k-q');if(q.value){q.value='';filter()}
  d.open=true;if(scroll!==false){d.scrollIntoView({behavior:'smooth',block:'start'})}
  try{history.replaceState(null,'','#'+id)}catch(x){}}
 list.addEventListener('click',function(ev){var b=ev.target.closest('[data-go]');if(b){openId(b.getAttribute('data-go'))}});
 list.addEventListener('toggle',function(ev){var d=ev.target;if(d.open&&d.id){try{history.replaceState(null,'','#'+d.id.slice(2))}catch(x){}}},true);
 document.getElementById('k-open').onclick=function(){all().forEach(function(d){if(d.style.display!=='none')d.open=true})};
 document.getElementById('k-close').onclick=function(){all().forEach(function(d){d.open=false});try{history.replaceState(null,'',location.pathname)}catch(x){}};
-function filter(){var v=document.getElementById('k-q').value.trim().toLowerCase(),n=0;
- all().forEach(function(d){var ok=!v||d.getAttribute('data-t').indexOf(v)>-1;d.style.display=ok?'':'none';if(ok)n++;if(v&&ok)d.open=false});
- [].forEach.call(list.querySelectorAll('.grp'),function(s){var any=[].some.call(s.querySelectorAll('details'),function(d){return d.style.display!=='none'});s.style.display=any?'':'none'});
- document.getElementById('k-tomt').style.display=n?'none':'block'}
-document.getElementById('k-q').addEventListener('input',filter);
 var tt;function toast(m){var t=document.getElementById('k-toast');t.textContent=m;t.className='toast on';clearTimeout(tt);tt=setTimeout(function(){t.className='toast'},2200)}
 document.getElementById('k-share').onclick=function(){
  var url='https://ai-michelklos.github.io/potus/kongres.html',txt='Præsident og kongres: USA\'s politiske system forklaret i en lille skole';
