@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Præsidentvalg i USA, delstat for delstat</title>
+<title>Præsidentvalg i USA 1864-2024</title>
 </head>
-<body style="margin:0;padding:12px;">
+<body>
 <div id="dak-potus">
 <style>
 #dak-potus, #dak-potus *, #dak-potus *::before, #dak-potus *::after { box-sizing: border-box; }
@@ -102,6 +102,10 @@
 #dak-potus button.dak-tile .dak-te { font-size: 11px; opacity: .9; }
 #dak-potus button.dak-tile.dak-sel { outline: 3px solid #0F2B36; outline-offset: 1px; position: relative; z-index: 1; }
 #dak-potus button.dak-tile.dak-flip { box-shadow: inset 0 0 0 3px #F2B705; }
+
+#dak-potus .dak-pvnote { margin: 0 0 10px; padding: 8px 12px; border-left: 4px solid #F2B705; background: #FFF8E1; border-radius: 0 8px 8px 0; font-size: 14px; line-height: 1.45; color: #0F2B36; }
+#dak-potus button.dak-yr { min-width: 0; min-height: 30px; padding: 0 9px; margin-left: 4px; border-radius: 999px; font-size: 13px; background: #fff; }
+#dak-potus button.dak-yr[aria-current="true"] { background: #F2B705; border-color: #F2B705; font-weight: 600; }
 @media (max-width: 700px) {
   #dak-potus .dak-hero { padding: 12px 12px 16px; gap: 12px; }
   #dak-potus .dak-hero .dak-flag { width: 58px; }
@@ -209,6 +213,9 @@
 
   var CONF = ['SC', 'MS', 'FL', 'AL', 'GA', 'TX', 'VA', 'AR', 'NC', 'TN', 'LA'];
   var STATEHOOD = { NE: 1867, CO: 1876, ND: 1889, SD: 1889, MT: 1889, WA: 1889, ID: 1890, WY: 1890, UT: 1896, OK: 1907, NM: 1912, AZ: 1912, AK: 1959, HI: 1959 };
+
+  function popTop(y) { return INFO[y].nat.slice().sort(function (a, b) { return b[1] - a[1]; })[0]; }
+  function isFlagged(y) { var tp = popTop(y); return !!tp && tp[2] !== electedCls(y); }
   function absentText(abbr, y) {
     if (y === 1864 && CONF.indexOf(abbr) >= 0) return 'Havde meldt sig ud af USA og indgik i Konføderationen, som ikke deltog i valget.';
     if (y === 1868 && ['MS', 'TX', 'VA'].indexOf(abbr) >= 0) return 'Var endnu ikke genoptaget i Unionen efter borgerkrigen og deltog ikke i valget.';
@@ -320,6 +327,10 @@
     var html = '<button type="button" class="dak-elbtn" id="dak-potus-elbtn"' + (bio ? ' aria-expanded="' + (bioOpen ? 'true' : 'false') + '" aria-controls="dak-potus-bio"' : '') + '><span class="dak-av" id="dak-potus-av" style="background:' + COLORS[winCls][2] + '" aria-hidden="true">' + initials(winName) + '</span>' +
       '<span class="dak-tx"><span class="dak-elected">Valgt præsident: <b>' + winName + '</b>' + (inf.party[winCls] ? ' (' + inf.party[winCls] + ')' : '') + '</span>' +
       '<span class="dak-elsub">Valgt ved præsidentvalget i ' + year + (bio ? ' &middot; tryk for biografi ' + (bioOpen ? '&#9652;' : '&#9662;') : '') + '</span></span></button>';
+    if (isFlagged(year)) {
+      var tp = popTop(year), wn = pop[winCls];
+      html += '<div class="dak-pvnote">På landsplan fik <b>' + tp[0] + '</b> flest stemmer (' + fmt1.format(tp[1]) + ' %), men <b>' + winName + '</b>' + (wn ? ' (' + fmt1.format(wn[1]) + ' %)' : '') + ' fik flest valgmænd efter delstaternes resultater (' + tot[winCls] + ' mod ' + tot[tp[2]] + ').</div>';
+    }
     html += '<div class="dak-bio" id="dak-potus-bio"' + (bio && bioOpen ? '' : ' hidden') + '>' + (bio && bioOpen ? bioHtml(winName, bio) : '') + '</div>';
     html += '<div class="dak-evbar" role="img" aria-label="Fordeling af valgmænd">';
     ['D', 'O', 'R'].forEach(function (cls) {
@@ -503,7 +514,14 @@
       html += '<span class="dak-chip">Skiftede vinder siden forrige valg: <b>' + flips.length + '</b> delstater</span>';
       html += '<label><input type="checkbox" id="dak-potus-flip"' + (showFlips ? ' checked' : '') + '> Fremhæv dem på kortet</label>';
     }
+    var fl = YEARS.filter(isFlagged);
+    if (fl.length) {
+      html += '<span class="dak-chip">Flest valgmænd, men ikke flest stemmer på landsplan:' + fl.map(function (y) { return '<button type="button" class="dak-yr" data-y="' + y + '"' + (y === year ? ' aria-current="true"' : '') + '>' + y + '</button>'; }).join('') + '</span>';
+    }
     chipsEl.innerHTML = html;
+    Array.prototype.forEach.call(chipsEl.querySelectorAll('button.dak-yr'), function (b) {
+      b.addEventListener('click', function () { year = Number(b.getAttribute('data-y')); paint(); });
+    });
     var cb = chipsEl.querySelector('#dak-potus-flip');
     if (cb) cb.addEventListener('change', function () { showFlips = cb.checked; markFlips(); });
     markFlips();
@@ -669,5 +687,6 @@
 })();
 </script>
 </div>
+
 </body>
 </html>
