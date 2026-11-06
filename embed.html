@@ -83,12 +83,27 @@
 #dak-potus button.dak-sq.dak-none { background: #E8EBE8; color: #9AA5A0; cursor: default; }
 #dak-potus button.dak-sq.dak-leg { background: repeating-linear-gradient(45deg, #E8EBE8 0 4px, #F6F7F6 4px 8px); color: #6b7280; }
 #dak-potus .dak-hist .dak-hnote { font-size: 12px; color: #4A5A5F; margin: 8px 0 0; }
+
+#dak-potus .dak-view { display: inline-flex; margin: 0 0 8px; border: 1px solid #B9C4BC; border-radius: 8px; overflow: hidden; background: #fff; }
+#dak-potus .dak-view button { border: 0; border-radius: 0; min-height: 38px; padding: 0 16px; background: #fff; font-size: 14px; }
+#dak-potus .dak-view button[aria-pressed="true"] { background: #6B9E78; color: #fff; }
+#dak-potus .dak-tiles { display: none; grid-template-columns: repeat(11, 1fr); gap: 4px; max-width: 760px; margin: 6px auto 0; }
+#dak-potus .dak-tiles .dak-gap { aspect-ratio: 1 / 1; }
+#dak-potus button.dak-tile { min-width: 0; min-height: 0; aspect-ratio: 1 / 1; padding: 0; border: 0; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; font-family: inherit; cursor: pointer; background: #E8EBE8; color: #6b7280; }
+#dak-potus button.dak-tile .dak-ta { font-size: 15px; font-weight: 700; }
+#dak-potus button.dak-tile .dak-te { font-size: 11px; opacity: .9; }
+#dak-potus button.dak-tile.dak-sel { outline: 3px solid #0F2B36; outline-offset: 1px; position: relative; z-index: 1; }
+#dak-potus button.dak-tile.dak-flip { box-shadow: inset 0 0 0 3px #F2B705; }
 @media (max-width: 700px) {
   #dak-potus .dak-hero { padding: 12px 12px 16px; gap: 12px; }
   #dak-potus .dak-hero .dak-flag { width: 58px; }
   #dak-potus .dak-hero h1 { font-size: 22px; }
   #dak-potus .dak-hero .dak-stars { display: none; }
   #dak-potus .dak-elected b { font-size: 18px; }
+  #dak-potus .dak-tiles { gap: 3px; }
+  #dak-potus button.dak-tile { border-radius: 4px; }
+  #dak-potus button.dak-tile .dak-ta { font-size: 11px; }
+  #dak-potus button.dak-tile .dak-te { font-size: 9px; }
   #dak-potus button.dak-sq { width: 26px; height: 26px; font-size: 10px; }
   #dak-potus .dak-av { flex-basis: 52px; width: 52px; height: 52px; font-size: 18px; }
   #dak-potus .dak-subtitle { font-size: 14px; }
@@ -111,8 +126,10 @@
 <div class="dak-shades" id="dak-potus-shades"></div>
 <div class="dak-note" id="dak-potus-ynote" style="margin:0 0 8px"></div>
 <div class="dak-chips" id="dak-potus-chips"></div>
+<div class="dak-view" role="group" aria-label="Visning"><button type="button" id="dak-potus-vmap" aria-pressed="true">Kort</button><button type="button" id="dak-potus-vtile" aria-pressed="false">Fliser</button></div>
 <div class="dak-mapwrap" id="dak-potus-wrap">
   <svg id="dak-potus-svg" viewBox="0 0 960 600" role="img" aria-label="Kort over USA med resultatet af præsidentvalget i hver delstat"></svg>
+  <div class="dak-tiles" id="dak-potus-tiles"></div>
   <div class="dak-tip" id="dak-potus-tip"></div>
 </div>
 <div class="dak-hist" id="dak-potus-hist">
@@ -121,7 +138,7 @@
   <div class="dak-strip" id="dak-potus-strip"></div>
   <div class="dak-hnote">Hvert felt er ét valg (årstal med to cifre). Tryk på et felt for at se det valg på kortet. Mørkere farve betyder større forskel i delstaten.</div>
 </div>
-<div class="dak-note">Farven viser, hvem der fik flest stemmer i delstaten, og jo mørkere farve, jo større forskel. Valgmænd er fordelt efter delstatens resultat, også for delstater hvor valgmændene i datidens regler ikke blev talt med (det fremgår af noten). Enkelte valgmænd har stemt anderledes end deres delstat, fx 7 i 2016, så de officielle totaler kan afvige med få stemmer. Maine og Nebraska fordeler en del af deres valgmænd efter kongresdistrikter, når data findes. Tryk eller hold musen over en delstat for detaljer.</div>
+<div class="dak-note">Farven viser, hvem der fik flest stemmer i delstaten, og jo mørkere farve, jo større forskel. Valgmænd er fordelt efter delstatens resultat, også for delstater hvor valgmændene i datidens regler ikke blev talt med (det fremgår af noten). Enkelte valgmænd har stemt anderledes end deres delstat, fx 7 i 2016, så de officielle totaler kan afvige med få stemmer. Maine og Nebraska fordeler en del af deres valgmænd efter kongresdistrikter, når data findes. Under "Fliser" er hver delstat en lige stor firkant med antallet af valgmænd, så små delstater er lette at se og trykke på. Tryk eller hold musen over en delstat for detaljer.</div>
 <div class="dak-source">Kilde: Wikipedia, resultater pr. delstat (samlet i datasættet Margin Matters) &nbsp;|&nbsp; Grafik og databehandling: Danske A-kasser</div>
 <script>
 (function () {
@@ -156,10 +173,14 @@
   var tip = ROOT.querySelector('#dak-potus-tip');
   var fmt1 = new Intl.NumberFormat('da-DK', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   var fmt0 = new Intl.NumberFormat('da-DK');
+  var fmt2 = new Intl.NumberFormat('da-DK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  function fmtM(m) { return m < 1 ? fmt2.format(m) : fmt1.format(m); }
 
   var year = YEARS[YEARS.length - 1];
   var selected = null;
   var paths = {};
+  var tiles = {};
+  var view = 'map';
   var states = {};
 
   function load(src, cb) {
@@ -209,9 +230,10 @@
     return t;
   }
   function sortedCands(rec) { return rec.c.slice().sort(function (a, b) { return b[1] - a[1]; }); }
-  function fillFor(abbr) {
+  function fillFor(abbr) { return fillInfo(abbr).fill; }
+  function fillInfo(abbr) {
     var recs = stateRecs(abbr);
-    if (!recs.main) return NODATA;
+    if (!recs.main) return { fill: NODATA, idx: -1 };
     var cs = sortedCands(recs.main);
     var margin = cs.length > 1 ? cs[0][1] - cs[1][1] : 100;
     var cls = cs[0][2];
@@ -221,7 +243,7 @@
       cls = best;
     }
     var idx = recs.main.l ? 0 : margin < STEPS[0] ? 0 : margin < STEPS[1] ? 1 : margin < STEPS[2] ? 2 : 3;
-    return COLORS[cls][idx];
+    return { fill: COLORS[cls][idx], idx: idx };
   }
   function lastName(n) { return n.split('/')[0].split(' ').slice(-1)[0]; }
   function candLabel(name, cls) {
@@ -346,7 +368,7 @@
       if (ev[cls]) parts.push(ev[cls] + ' til ' + lastName(INFO[year].names[cls] || cs.filter(function (c) { return c[2] === cls; })[0][0]));
     });
     var total = ev.D + ev.R + ev.O;
-    h += '<div class="dak-meta">Forskel: ' + fmt1.format(margin) + ' procentpoint<br>Valgmænd: ' + total + (parts.length > 1 ? ' (' + parts.join(', ') + ')' : '') + '<br>Afgivne stemmer: ' + fmt0.format(recs.main.t) + '</div>';
+    h += '<div class="dak-meta">Forskel: ' + fmtM(margin) + ' procentpoint<br>Valgmænd: ' + total + (parts.length > 1 ? ' (' + parts.join(', ') + ')' : '') + '<br>Afgivne stemmer: ' + fmt0.format(recs.main.t) + '</div>';
     if (recs.dist.length) {
       h += '<div class="dak-meta">Distrikter: ';
       h += recs.dist.map(function (k) {
@@ -382,6 +404,7 @@
     if (selected && paths[selected]) paths[selected].classList.remove('dak-sel');
     selected = abbr;
     if (paths[abbr]) { paths[abbr].classList.add('dak-sel'); }
+    Object.keys(tiles).forEach(function (k) { tiles[k].classList.toggle('dak-sel', k === abbr); });
     var hs = ROOT.querySelector('#dak-potus-hsel');
     if (hs && hs.value !== abbr) hs.value = abbr;
     renderHist();
@@ -434,7 +457,7 @@
         var idx = s.m < STEPS[0] ? 0 : s.m < STEPS[1] ? 1 : s.m < STEPS[2] ? 2 : 3;
         b.style.background = COLORS[s.cls][idx];
         b.style.color = idx >= 2 ? '#fff' : '#0F2B36';
-        b.title = s.y + ': ' + s.name + ', forskel ' + fmt1.format(s.m) + ' procentpoint';
+        b.title = s.y + ': ' + s.name + ', forskel ' + fmtM(s.m) + ' procentpoint';
         b.setAttribute('aria-label', b.title);
       }
       if (!s.none) b.addEventListener('click', function () { year = s.y; paint(); });
@@ -480,8 +503,10 @@
   var flips = [];
   function markFlips() {
     Object.keys(paths).forEach(function (a) { paths[a].classList.remove('dak-flip'); });
+    Object.keys(tiles).forEach(function (a) { tiles[a].classList.remove('dak-flip'); });
     if (!showFlips) return;
     flips.forEach(function (a) {
+      if (tiles[a]) tiles[a].classList.add('dak-flip');
       var p = paths[a]; if (!p || a === 'DC') return;
       p.classList.add('dak-flip'); p.parentNode.appendChild(p);
     });
@@ -501,12 +526,41 @@
     }, 1500);
   }
 
+
+  function paintTiles() {
+    Object.keys(tiles).forEach(function (a) {
+      var fi = fillInfo(a), el = tiles[a], recs = stateRecs(a);
+      el.style.background = fi.fill;
+      el.style.color = fi.idx < 0 ? '#9AA5A0' : (fi.idx >= 2 ? '#fff' : '#0F2B36');
+      var ev = 0;
+      if (recs.main) { var e = evByCls(recs); ev = e.D + e.R + e.O; }
+      el.querySelector('.dak-te').textContent = ev ? String(ev) : '';
+      el.setAttribute('aria-label', states[a].name + (recs.main ? ', ' + ev + ' valgmænd' : ', deltog ikke'));
+    });
+  }
+  function setView(v) {
+    view = v;
+    svgEl.style.display = v === 'map' ? 'block' : 'none';
+    ROOT.querySelector('#dak-potus-tiles').style.display = v === 'tile' ? 'grid' : 'none';
+    ROOT.querySelector('#dak-potus-vmap').setAttribute('aria-pressed', v === 'map' ? 'true' : 'false');
+    ROOT.querySelector('#dak-potus-vtile').setAttribute('aria-pressed', v === 'tile' ? 'true' : 'false');
+    tip.style.display = 'none';
+  }
+  var LAYOUT = [['AK', 0, 0], ['ME', 0, 10], ['VT', 1, 9], ['NH', 1, 10],
+    ['WA', 2, 0], ['ID', 2, 1], ['MT', 2, 2], ['ND', 2, 3], ['MN', 2, 4], ['IL', 2, 5], ['WI', 2, 6], ['MI', 2, 7], ['NY', 2, 8], ['RI', 2, 9], ['MA', 2, 10],
+    ['OR', 3, 0], ['NV', 3, 1], ['WY', 3, 2], ['SD', 3, 3], ['IA', 3, 4], ['IN', 3, 5], ['OH', 3, 6], ['PA', 3, 7], ['NJ', 3, 8], ['CT', 3, 9],
+    ['CA', 4, 0], ['UT', 4, 1], ['CO', 4, 2], ['NE', 4, 3], ['MO', 4, 4], ['KY', 4, 5], ['WV', 4, 6], ['VA', 4, 7], ['MD', 4, 8], ['DE', 4, 9],
+    ['AZ', 5, 1], ['NM', 5, 2], ['KS', 5, 3], ['AR', 5, 4], ['TN', 5, 5], ['NC', 5, 6], ['SC', 5, 7], ['DC', 5, 8],
+    ['OK', 6, 2], ['LA', 6, 3], ['MS', 6, 4], ['AL', 6, 5], ['GA', 6, 6],
+    ['HI', 7, 0], ['TX', 7, 3], ['FL', 7, 7]];
+
   function paint(keepPlay) {
     if (!keepPlay) stopPlay();
     Object.keys(paths).forEach(function (a) {
       var f = fillFor(a);
       paths[a].setAttribute('fill', f);
     });
+    paintTiles();
     renderLegend();
     renderChips();
     if (selected) renderHist();
@@ -548,8 +602,7 @@
       // skjul selve DC-polygonen, cirklen overtager
       d3.select(svgEl).selectAll('path[data-abbr="DC"]').remove();
     }
-    var els = svgEl.querySelectorAll('[data-abbr]');
-    Array.prototype.forEach.call(els, function (el) {
+    var bindEl = function (el) {
       var a = el.getAttribute('data-abbr');
       el.addEventListener('pointermove', function (e) {
         if (e.pointerType === 'mouse') { showTip(a, e); }
@@ -568,7 +621,20 @@
           select(a); showTip(a, { clientX: b.left + b.width / 2, clientY: b.top + b.height / 2 });
         }
       });
-    });
+    };
+    Array.prototype.forEach.call(svgEl.querySelectorAll('[data-abbr]'), bindEl);
+    var grid = ROOT.querySelector('#dak-potus-tiles');
+    var cells = {};
+    LAYOUT.forEach(function (l) { cells[l[1] * 11 + l[2]] = l[0]; });
+    for (var ci = 0; ci < 88; ci++) {
+      var ab = cells[ci];
+      if (!ab) { var g = document.createElement('div'); g.className = 'dak-gap'; g.setAttribute('aria-hidden', 'true'); grid.appendChild(g); continue; }
+      var tb = document.createElement('button'); tb.type = 'button'; tb.className = 'dak-tile'; tb.setAttribute('data-abbr', ab);
+      tb.innerHTML = '<span class="dak-ta">' + ab + '</span><span class="dak-te"></span>';
+      grid.appendChild(tb); tiles[ab] = tb; bindEl(tb);
+    }
+    ROOT.querySelector('#dak-potus-vmap').addEventListener('click', function () { setView('map'); });
+    ROOT.querySelector('#dak-potus-vtile').addEventListener('click', function () { setView('tile'); });
     document.addEventListener('click', function (e) { if (!wrap.contains(e.target)) hideTip(); });
     svgEl.addEventListener('click', hideTip);
 
