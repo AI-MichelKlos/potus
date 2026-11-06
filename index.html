@@ -523,7 +523,7 @@
     });
     if (best) html += '<span class="dak-chip">Tætteste delstat: <b>' + states[best.a].name + '</b> (' + new Intl.NumberFormat('da-DK', { minimumFractionDigits: best.m < 1 ? 2 : 1, maximumFractionDigits: best.m < 1 ? 2 : 1 }).format(best.m) + ' procentpoint)</span>';
     var tp = tippingState();
-    if (tp && !tp.legis && states[tp.a]) html += '<span class="dak-chip" title="Delstaterne sorteret efter vinderens forspring. Den delstat, der får vinderen over flertallet, er den afgørende.">Afgørende delstat: <b>' + states[tp.a].name + '</b> (vinderens forspring ' + new Intl.NumberFormat('da-DK', { minimumFractionDigits: tp.m < 1 ? 2 : 1, maximumFractionDigits: tp.m < 1 ? 2 : 1 }).format(tp.m) + ' procentpoint, bragte vinderen op på ' + tp.cum + ' af ' + tp.need + ' nødvendige valgmænd)</span>';
+    if (tp && !tp.legis && states[tp.a]) html += '<span class="dak-chip" title="Delstaterne sorteret efter vinderens forspring. Den delstat, der får vinderen over flertallet, er den afgørende.">Afgørende delstat: <b>' + states[tp.a].name + '</b> (vinderens forspring ' + new Intl.NumberFormat('da-DK', { minimumFractionDigits: tp.m < 1 ? 2 : 1, maximumFractionDigits: tp.m < 1 ? 2 : 1 }).format(tp.m) + ' procentpoint). Her nåede vinderen flertallet på ' + tp.need + ' valgmænd.</span>';
     flips = [];
     if (i > 0) {
       var prev = YEARS[i - 1];
