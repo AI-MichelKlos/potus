@@ -105,7 +105,9 @@ body{margin:0 auto;padding:12px 12px 28px;max-width:1100px}
 #dak-potus .dak-hist .dak-hnote { font-size: 12px; color: #4A5A5F; margin: 8px 0 0; }
 
 #dak-potus .dak-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 8px; }
-#dak-potus .dak-tools button { min-height: 38px; padding: 0 14px; font-size: 14px; }
+#dak-potus .dak-tools button, #dak-potus .dak-toolink { min-height: 38px; padding: 0 14px; font-size: 14px; }
+#dak-potus .dak-toolink { display: inline-flex; align-items: center; border: 1px solid #B9C4BC; border-radius: 6px; background: #fff; color: #0F2B36; text-decoration: none; }
+#dak-potus .dak-toolink:hover { border-color: #6B9E78; }
 #dak-potus #dak-potus-toolmsg { font-size: 13px; color: #4a5a50; }
 #dak-potus .dak-quiz { margin: 0 0 10px; padding: 12px 14px; border: 1px solid #B9C4BC; border-radius: 10px; background: #F7FAF7; }
 #dak-potus .dak-hero .dak-share { margin-left: auto; flex: 0 0 auto; position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 16px; border-radius: 22px; border: 1px solid rgba(255,255,255,.6); background: rgba(255,255,255,.14); color: #fff; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
@@ -174,7 +176,7 @@ body{margin:0 auto;padding:12px 12px 28px;max-width:1100px}
 <div class="dak-legend" id="dak-potus-legend"></div>
 <div class="dak-shades" id="dak-potus-shades"></div>
 <div class="dak-note" id="dak-potus-ynote" style="margin:0 0 8px"></div>
-<div class="dak-tools"><button type="button" id="dak-potus-quizbtn" aria-expanded="false" aria-controls="dak-potus-quiz">Quiz: test din viden</button></div>
+<div class="dak-tools"><button type="button" id="dak-potus-quizbtn" aria-expanded="false" aria-controls="dak-potus-quiz">Quiz: test din viden</button><a class="dak-toolink" href="https://ai-michelklos.github.io/potus/kongres.html" target="_top">Præsident og kongres: lær systemet at kende</a></div>
 <div class="dak-quiz" id="dak-potus-quiz" hidden></div>
 <div class="dak-view" role="group" aria-label="Visning"><button type="button" id="dak-potus-vmap" aria-pressed="true">Kort</button><button type="button" id="dak-potus-vtile" aria-pressed="false">Fliser</button></div>
 <div class="dak-mapwrap" id="dak-potus-wrap">
