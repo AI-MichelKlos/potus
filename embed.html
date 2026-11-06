@@ -177,6 +177,21 @@
     if (window.d3) go(); else load('https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js', go);
   }
 
+
+  var CONF = ['SC', 'MS', 'FL', 'AL', 'GA', 'TX', 'VA', 'AR', 'NC', 'TN', 'LA'];
+  var STATEHOOD = { NE: 1867, CO: 1876, ND: 1889, SD: 1889, MT: 1889, WA: 1889, ID: 1890, WY: 1890, UT: 1896, OK: 1907, NM: 1912, AZ: 1912, AK: 1959, HI: 1959 };
+  function absentText(abbr, y) {
+    if (y === 1864 && CONF.indexOf(abbr) >= 0) return 'Havde meldt sig ud af USA og indgik i Konføderationen, som ikke deltog i valget.';
+    if (y === 1868 && ['MS', 'TX', 'VA'].indexOf(abbr) >= 0) return 'Var endnu ikke genoptaget i Unionen efter borgerkrigen og deltog ikke i valget.';
+    if (abbr === 'DC') return 'Hovedstadsdistriktet fik først valgmænd med det 23. forfatningstillæg i 1961.';
+    if (abbr === 'AK') return y < 1867 ? 'Hørte til Rusland (Russisk Amerika) indtil salget til USA i 1867.' : 'Amerikansk territorium og ikke en stat før 1959. Indbyggerne havde ingen valgmænd.';
+    if (abbr === 'HI') return y < 1898 ? 'Selvstændigt kongerige og senere republik. USA annekterede Hawaii i 1898.' : 'Amerikansk territorium og ikke en stat før 1959. Indbyggerne havde ingen valgmænd.';
+    if (abbr === 'OK') return 'Territorium (Indian Territory og senere Oklahoma Territory) og ikke en stat før 1907. Indbyggerne havde ingen valgmænd.';
+    if (abbr === 'WY' && y < 1868) return 'Området hørte til andre territorier og blev først et eget territorium i 1868. Stat i 1890.';
+    if (STATEHOOD[abbr] && y < STATEHOOD[abbr]) return 'Territorium styret af regeringen i Washington og ikke en stat før ' + STATEHOOD[abbr] + '. Indbyggerne havde ingen valgmænd.';
+    return 'Deltog ikke i dette valg.';
+  }
+
   function stateRecs(abbr) {
     var d = DATA[year];
     var main = d[abbr] || d[abbr + '-AL'] || null;
@@ -303,7 +318,7 @@
     for (var i = 0; i < 4; i++) {
       sh += '<span><span class="dak-s" style="background:' + COLORS.D[i] + '"></span><span class="dak-s" style="background:' + COLORS.R[i] + '"></span> ' + labels[i] + '</span>';
     }
-    sh += '<span>procentpoint</span>';
+    sh += '<span>procentpoint</span><span><span class="dak-s" style="background:#E8EBE8"></span> deltog ikke (forklaring ved tryk)</span>';
     shadesEl.innerHTML = sh;
   }
 
@@ -312,7 +327,7 @@
     var recs = stateRecs(abbr);
     var h = '<div class="dak-tt">' + nm + ', ' + year + '</div>';
     if (!recs.main) {
-      return h + '<div class="dak-meta">Delstaten deltog ikke i dette valg.</div>';
+      return h + '<div class="dak-meta">' + absentText(abbr, year) + '</div>';
     }
     var cs = sortedCands(recs.main);
     if (recs.main.l) cs = [];
@@ -413,7 +428,7 @@
       var yy = String(s.y).slice(2);
       b.textContent = yy;
       b.className = 'dak-sq' + (s.none ? ' dak-none' : '') + (s.leg ? ' dak-leg' : '') + (s.y === year ? ' dak-cur' : '');
-      if (s.none) { b.title = s.y + ': deltog ikke'; b.setAttribute('aria-label', s.y + ': delstaten deltog ikke'); b.disabled = true; }
+      if (s.none) { b.title = s.y + ': ' + absentText(abbr, s.y); b.setAttribute('aria-label', b.title); b.setAttribute('aria-disabled', 'true'); b.style.cursor = 'help'; }
       else if (s.leg) { b.title = s.y + ': valgmænd udpeget af delstatens parlament'; b.setAttribute('aria-label', b.title); }
       else {
         var idx = s.m < STEPS[0] ? 0 : s.m < STEPS[1] ? 1 : s.m < STEPS[2] ? 2 : 3;
@@ -423,6 +438,7 @@
         b.setAttribute('aria-label', b.title);
       }
       if (!s.none) b.addEventListener('click', function () { year = s.y; paint(); });
+      else b.addEventListener('click', function () { var m = ROOT.querySelector('#dak-potus-hsum'); var n = ROOT.querySelector('#dak-potus-hmsg'); if (!n) { n = document.createElement('p'); n.id = 'dak-potus-hmsg'; n.style.fontSize = '13px'; n.style.color = '#4A5A5F'; m.parentNode.insertBefore(n, strip.nextSibling); } n.textContent = s.y + ': ' + absentText(abbr, s.y); });
       strip.appendChild(b);
     });
   }
