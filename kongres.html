@@ -53,6 +53,16 @@ body{margin:0;padding:12px 12px 32px}
 #dak-kongres .kilde{margin-top:22px;font-size:13px;color:#6B6054}
 #dak-kongres .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#1B2F4B;color:#fff;padding:10px 16px;border-radius:6px;font-size:15px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:10}
 #dak-kongres .toast.on{opacity:1}
+#dak-kongres .qz{background:#FFFAF2;border:1px solid #E3D9C8;border-radius:8px;padding:14px;margin:10px 0}
+#dak-kongres .qz h2{margin:0 0 8px;font-size:20px}
+#dak-kongres .qz .qq{font-size:17px;margin:0 0 10px}
+#dak-kongres .qz .qo{display:block;width:100%;text-align:left;min-height:46px;margin:0 0 8px;padding:8px 12px;border:1px solid #D9CDB8;border-radius:6px;background:#fff;color:#3C342B;font:inherit;font-size:16px;cursor:pointer}
+#dak-kongres .qz .qo:hover:not([disabled]){border-color:#6B9E78}
+#dak-kongres .qz .ok{background:#E3F0E5;border-color:#6B9E78}
+#dak-kongres .qz .bad{background:#F6E3DD;border-color:#C98B7B}
+#dak-kongres .qz .qf{margin:6px 0 10px;font-size:15px}
+#dak-kongres .qz .acts{display:flex;gap:8px;flex-wrap:wrap}
+#dak-kongres .qz .acts button,#dak-kongres .qb{min-height:42px;padding:0 14px;border:1px solid #D9CDB8;border-radius:6px;background:#fff;color:#3C342B;font:inherit;font-size:15px;cursor:pointer}
 @media(max-width:520px){#dak-kongres h1{font-size:23px;padding-right:0;margin-top:44px}#dak-kongres h2{font-size:20px}#dak-kongres summary b{font-size:17px}}
 </style>
 </head>
@@ -71,11 +81,13 @@ body{margin:0;padding:12px 12px 32px}
     <input id="k-q" type="search" placeholder="Søg, fx filibuster eller veto" aria-label="Søg i emnerne">
     <button id="k-open" type="button">Åbn alle</button>
     <button id="k-close" type="button">Luk alle</button>
+    <button id="k-quizbtn" type="button" aria-expanded="false">Quiz: test din viden</button>
   </div>
+  <div class="qz" id="k-quiz" hidden></div>
   <p class="intro">Tryk på et emne for at åbne det. Under hvert emne kan du hoppe videre til beslægtede emner.</p>
   <div id="k-list"></div>
   <div class="tomt" id="k-tomt">Ingen emner passer til din søgning.</div>
-  <p class="kilde">Forklaringerne bygger på USA's forfatning, kongressens egne sider (congress.gov, house.gov og senate.gov) og Højesterettens side (supremecourt.gov). Tal om de nuværende flertal ændrer sig efter hvert valg, så tjek dem hos kongressens egne sider eller en nyhedstjeneste, hvis du skal bruge dem. Tekst og opsætning: Danske A-kasser.</p>
+  <p class="kilde">Forklaringerne bygger på USA's forfatning, kongressens egne sider (congress.gov, house.gov og senate.gov) og Højesterettens side (supremecourt.gov). Tal om de nuværende flertal ændrer sig efter hvert valg, så tjek dem hos kongressens egne sider eller en nyhedstjeneste, hvis du skal bruge dem. Udarbejdet af Michel Klos og AI.</p>
   <div class="toast" id="k-toast" role="status"></div>
 </div>
 <script>
@@ -156,6 +168,39 @@ document.getElementById('k-share').onclick=function(){
  if(navigator.share){navigator.share({title:txt,text:txt,url:url}).catch(function(){})}
  else if(navigator.clipboard){navigator.clipboard.writeText(url).then(function(){toast('Link kopieret')},function(){toast(url)})}
  else{toast(url)}};
+
+var SYS = [
+    ['Hvor mange senatorer har hver delstat?', '2', ['1', '3', '5'], 'Alle 50 delstater har to senatorer, så Senatet har 100 medlemmer.'],
+    ['Hvor mange medlemmer har Repræsentanternes Hus?', '435', ['100', '270', '538'], 'Huset har 435 medlemmer, fordelt på delstaterne efter indbyggertal.'],
+    ['Hvor mange år varer en senators valgperiode?', '6 år', ['2 år', '4 år', '8 år'], 'Senatorer vælges for seks år, og cirka en tredjedel er på valg hvert andet år.'],
+    ['Hvor mange år varer et medlem af Repræsentanternes Hus sin valgperiode?', '2 år', ['4 år', '6 år', '1 år'], 'Alle 435 pladser i Huset er på valg hvert andet år.'],
+    ['Hvor mange dommere er der i Højesteret?', '9', ['7', '11', '12'], 'Højesteret har ni dommere, som sidder på livstid.'],
+    ['Hvor mange valgmænd skal en kandidat mindst have for at vinde præsidentvalget?', '270', ['200', '435', '538'], 'Der er 538 valgmænd i alt, så 270 er et flertal.'],
+    ['Hvem er formand for Senatet?', 'Vicepræsidenten', ['Talmanden', 'Højesterets øverste dommer', 'Præsidenten'], 'Vicepræsidenten leder Senatet, men stemmer kun, hvis der er stemmelighed.'],
+    ['Hvem leder Repræsentanternes Hus?', 'Talmanden', ['Vicepræsidenten', 'Senatets flertalsleder', 'Præsidenten'], 'Lederen af Huset hedder talmanden (Speaker of the House) og vælges af husets medlemmer.'],
+    ['Hvor mange stemmer skal der som regel til i Senatet for at stoppe en filibuster?', '60', ['51', '67', '75'], 'Det hedder cloture og kræver 60 af de 100 stemmer. Derfor kan 41 senatorer blokere de fleste love.'],
+    ['Hvor stort et flertal skal der til for at tilsidesætte et præsidentveto?', 'To tredjedele i begge kamre', ['Simpelt flertal i Huset', 'Tre fjerdedele i Senatet', 'Et flertal i Højesteret'], 'Kongressen kan vedtage loven alligevel, hvis to tredjedele i både Huset og Senatet stemmer for.'],
+    ['Hvem skal godkende præsidentens valg af højesteretsdommere?', 'Senatet', ['Repræsentanternes Hus', 'Delstaternes guvernører', 'Vicepræsidenten'], 'Præsidenten peger på en kandidat, og Senatet skal sige ja.'],
+    ['Hvor længe sidder en højesteretsdommer?', 'På livstid', ['I 8 år', 'I 12 år', 'Til næste præsidentvalg'], 'Dommerne kan blive, så længe de vil, og kan kun fjernes ved rigsretssag.'],
+    ['Hvad hedder det, når man tegner valgdistrikter, så det hjælper et bestemt parti?', 'Gerrymandering', ['Filibuster', 'Impeachment', 'Cloture'], 'Ordet kommer af guvernør Elbridge Gerry og et distrikt fra 1812, der lignede en salamander.'],
+    ['Hvilken institution kan erklære en lov for forfatningsstridig?', 'Højesteret', ['Senatet', 'Vicepræsidenten', 'Talmanden'], 'Domstolene kan underkende love og ordrer, der strider mod forfatningen.'],
+    ['Hvem anklager en præsident i en rigsretssag (impeachment)?', 'Repræsentanternes Hus', ['Senatet', 'Højesteret', 'Delstaternes guvernører'], 'Huset rejser anklagen med simpelt flertal. Derefter dømmer Senatet, hvor der skal to tredjedele til.'],
+    ['Hvor mange gange kan en præsident højst vælges?', '2', ['1', '3', 'Så mange gange man vil'], 'Grænsen står i den 22. tilføjelse til forfatningen fra 1951.'],
+    ['Hvilket ord bruges om, at USA er delt i delstater med egen magt under en fælles stat?', 'Føderalisme', ['Tredeling af magten', 'Valgmandskollegium', 'Cloture'], 'Forbundsstaten og de 50 delstater deler magten mellem sig.'],
+    ['Hvilke tre grene deler magten i USA?', 'Præsident, kongres og domstole', ['Præsident, guvernører og byråd', 'Hæren, politiet og domstolene', 'Senatet, Huset og vicepræsidenten'], 'Det kaldes tredeling af magten og står i forfatningens tre første artikler.']
+  ];
+function sh(a){return a.slice().sort(function(){return Math.random()-.5})}
+var qz=document.getElementById('k-quiz'),QS,qi,qs;
+function qStart(){QS=sh(SYS).slice(0,10).map(function(q){return {q:q[0],r:q[1],o:sh([q[1]].concat(q[2])),f:q[3]}});qi=0;qs=0;qRender()}
+function qRender(){var h='<h2>Test din viden</h2>';
+ if(qi>=QS.length){qz.innerHTML=h+'<p class="qq"><b>'+qs+' af '+QS.length+' rigtige.</b> '+(qs>=9?'Flot! Du kender systemet.':qs>=7?'Rigtig godt klaret.':qs>=4?'En fin start. Læs videre i knapperne og prøv igen.':'Åbn knapperne nedenfor og prøv igen.')+'</p><div class="acts"><button type="button" id="k-again">Spil igen</button></div>';document.getElementById('k-again').onclick=qStart;return}
+ var q=QS[qi];h+='<p class="qq"><b>Spørgsmål '+(qi+1)+' af '+QS.length+'.</b> '+esc(q.q)+'</p>'+q.o.map(function(o,i){return '<button type="button" class="qo" data-i="'+i+'">'+esc(o)+'</button>'}).join('')+'<div id="k-qf"></div>';
+ qz.innerHTML=h;[].forEach.call(qz.querySelectorAll('.qo'),function(b){b.onclick=function(){
+  var ok=q.o[+b.getAttribute('data-i')]===q.r;if(ok)qs++;
+  [].forEach.call(qz.querySelectorAll('.qo'),function(x){x.disabled=true;if(q.o[+x.getAttribute('data-i')]===q.r)x.className='qo ok'});if(!ok)b.className='qo bad';
+  document.getElementById('k-qf').innerHTML='<p class="qf"><b>'+(ok?'Rigtigt.':'Ikke helt.')+'</b> '+esc(q.f)+'</p><div class="acts"><button type="button" id="k-next">'+(qi+1>=QS.length?'Se resultat':'Næste')+'</button></div>';
+  document.getElementById('k-next').onclick=function(){qi++;qRender()}}})}
+document.getElementById('k-quizbtn').onclick=function(){var o=qz.hasAttribute('hidden');if(o){qz.removeAttribute('hidden');qStart();qz.scrollIntoView({behavior:'smooth',block:'start'})}else{qz.setAttribute('hidden','')}this.setAttribute('aria-expanded',o)};
 var h=location.hash.replace('#','');if(h&&byId[h]){openId(h,false);setTimeout(function(){document.getElementById('e-'+h).scrollIntoView()},50)}
 })();
 </script>
