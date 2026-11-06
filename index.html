@@ -92,6 +92,9 @@
 #dak-potus button.dak-sq.dak-leg { background: repeating-linear-gradient(45deg, #E8EBE8 0 4px, #F6F7F6 4px 8px); color: #6b7280; }
 #dak-potus .dak-hist .dak-hnote { font-size: 12px; color: #4A5A5F; margin: 8px 0 0; }
 
+#dak-potus .dak-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 8px; }
+#dak-potus .dak-tools button { min-height: 38px; padding: 0 14px; font-size: 14px; }
+#dak-potus #dak-potus-toolmsg { font-size: 13px; color: #4a5a50; }
 #dak-potus .dak-view { display: inline-flex; margin: 0 0 8px; border: 1px solid #B9C4BC; border-radius: 8px; overflow: hidden; background: #fff; }
 #dak-potus .dak-view button { border: 0; border-radius: 0; min-height: 38px; padding: 0 16px; background: #fff; font-size: 14px; }
 #dak-potus .dak-view button[aria-pressed="true"] { background: #6B9E78; color: #fff; }
@@ -138,6 +141,7 @@
 <div class="dak-shades" id="dak-potus-shades"></div>
 <div class="dak-note" id="dak-potus-ynote" style="margin:0 0 8px"></div>
 <div class="dak-chips" id="dak-potus-chips"></div>
+<div class="dak-tools"><button type="button" id="dak-potus-img">Gem kortet som billede</button><button type="button" id="dak-potus-link">Kopier link til dette valg</button><span id="dak-potus-toolmsg" role="status"></span></div>
 <div class="dak-view" role="group" aria-label="Visning"><button type="button" id="dak-potus-vmap" aria-pressed="true">Kort</button><button type="button" id="dak-potus-vtile" aria-pressed="false">Fliser</button></div>
 <div class="dak-mapwrap" id="dak-potus-wrap">
   <svg id="dak-potus-svg" viewBox="0 0 960 600" role="img" aria-label="Kort over USA med resultatet af præsidentvalget i hver delstat"></svg>
@@ -600,6 +604,64 @@
     ['OK', 6, 2], ['LA', 6, 3], ['MS', 6, 4], ['AL', 6, 5], ['GA', 6, 6],
     ['HI', 7, 0], ['TX', 7, 3], ['FL', 7, 7]];
 
+
+  function toolMsg(t) {
+    var m = ROOT.querySelector('#dak-potus-toolmsg'); m.textContent = t;
+    setTimeout(function () { if (m.textContent === t) m.textContent = ''; }, 3500);
+  }
+  function saveImage() {
+    var clone = svgEl.cloneNode(true);
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    clone.setAttribute('width', 960); clone.setAttribute('height', 600);
+    Array.prototype.forEach.call(clone.querySelectorAll('path.dak-state, circle.dak-dc'), function (e) {
+      e.setAttribute('stroke', '#fff'); e.setAttribute('stroke-width', e.tagName === 'circle' ? 1 : .8); e.removeAttribute('class');
+    });
+    var tot = { D: 0, R: 0, O: 0 };
+    Object.keys(DATA[year]).forEach(function (k) { DATA[year][k].e.forEach(function (x) { tot[x[0]] += x[1]; }); });
+    var order = ['D', 'R', 'O'].filter(function (c) { return tot[c] > 0; }).sort(function (a, b) { return tot[b] - tot[a]; });
+    var inf = INFO[year], W = 1200, H = 1000, mapH = 750;
+    var cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    var cx = cv.getContext('2d');
+    var img = new Image();
+    img.onload = function () {
+      cx.fillStyle = '#fff'; cx.fillRect(0, 0, W, H);
+      cx.fillStyle = '#0F2B36'; cx.textBaseline = 'alphabetic';
+      var ff = 'Inter, Helvetica, Arial, sans-serif';
+      cx.font = '700 44px ' + ff; cx.fillText('Præsidentvalget i USA ' + year, 40, 66);
+      cx.font = '400 26px ' + ff;
+      var lead = order[0];
+      cx.fillText('Valgt: ' + (inf.names[lead] || '') + (inf.party[lead] ? ' (' + inf.party[lead] + ')' : ''), 40, 108);
+      var x = 40;
+      order.forEach(function (c) {
+        cx.fillStyle = COLORS[c][2]; cx.fillRect(x, 140, 22, 22);
+        cx.fillStyle = '#0F2B36'; cx.font = '400 22px ' + ff;
+        var t = (inf.names[c] || '') + ': ' + tot[c] + ' valgmænd';
+        cx.fillText(t, x + 32, 160); x += 32 + cx.measureText(t).width + 36;
+      });
+      cx.drawImage(img, 0, 190, W, mapH);
+      cx.fillStyle = '#4a5a50'; cx.font = '400 18px ' + ff;
+      cx.fillText('Farvens styrke viser forskellen i delstaten: lys under 5, mellem 5-10, kraftig 10-20, mørk over 20 procentpoint. Grå: deltog ikke.', 40, 970);
+      cx.fillText('Kilde: Wikipedia, resultater pr. delstat (Margin Matters) | Grafik og databehandling: Danske A-kasser', 40, 990);
+      cv.toBlob(function (b) {
+        var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'praesidentvalg-' + year + '.png';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+        toolMsg('Billedet er gemt.');
+      }, 'image/png');
+    };
+    img.onerror = function () { toolMsg('Billedet kunne ikke laves i denne browser.'); };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(clone));
+  }
+  function copyLink() {
+    var url = location.href.split('#')[0] + '#' + year;
+    var done = function () { toolMsg('Linket er kopieret.'); };
+    var fallback = function () { window.prompt('Kopier linket:', url); };
+    try { navigator.clipboard.writeText(url).then(done, fallback); } catch (e) { fallback(); }
+  }
+  function yearFromHash() {
+    var m = /^#(\d{4})$/.exec(location.hash || ''); var y = m ? Number(m[1]) : 0;
+    return YEARS.indexOf(y) >= 0 ? y : 0;
+  }
   function paint(keepPlay) {
     if (!keepPlay) stopPlay();
     Object.keys(paths).forEach(function (a) {
@@ -616,6 +678,7 @@
     prevBtn.disabled = i <= 0;
     nextBtn.disabled = i >= YEARS.length - 1;
     yearSel.value = String(year);
+    try { history.replaceState(null, '', '#' + year); } catch (e) {}
     hideTip();
   }
 
@@ -699,6 +762,10 @@
     hsel.addEventListener('change', function () { select(hsel.value); });
     playBtn.addEventListener('click', togglePlay);
     nextBtn.addEventListener('click', function () { var i = YEARS.indexOf(year); if (i < YEARS.length - 1) { year = YEARS[i + 1]; paint(); } });
+    ROOT.querySelector('#dak-potus-img').addEventListener('click', saveImage);
+    ROOT.querySelector('#dak-potus-link').addEventListener('click', copyLink);
+    window.addEventListener('hashchange', function () { var hy = yearFromHash(); if (hy && hy !== year) { year = hy; paint(); } });
+    var h0 = yearFromHash(); if (h0) year = h0;
     selected = 'OH'; paths['OH'].classList.add('dak-sel'); hsel.value = 'OH';
     paint();
   }
