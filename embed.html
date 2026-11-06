@@ -88,6 +88,12 @@
 #dak-potus .dak-tools button { min-height: 38px; padding: 0 14px; font-size: 14px; }
 #dak-potus #dak-potus-toolmsg { font-size: 13px; color: #4a5a50; }
 #dak-potus .dak-quiz { margin: 0 0 10px; padding: 12px 14px; border: 1px solid #B9C4BC; border-radius: 10px; background: #F7FAF7; }
+#dak-potus .dak-hero .dak-share { margin-left: auto; flex: 0 0 auto; position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 16px; border-radius: 22px; border: 1px solid rgba(255,255,255,.6); background: rgba(255,255,255,.14); color: #fff; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
+#dak-potus .dak-hero .dak-share:hover { background: rgba(255,255,255,.28); }
+#dak-potus .dak-hero .dak-share:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+#dak-potus .dak-quiz .dak-qprog { font-size: 13px; color: #4a5a50; margin: 0 0 6px; }
+#dak-potus .dak-quiz .dak-opts button { flex: 1 1 calc(50% - 8px); }
+.dak-toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 9999; background: #12264A; color: #fff; padding: 10px 18px; border-radius: 22px; font: 14px/1.3 Inter, Helvetica, Arial, sans-serif; box-shadow: 0 4px 16px rgba(0,0,0,.3); max-width: 90vw; text-align: center; }
 #dak-potus .dak-quiz h2 { margin: 0 0 6px; font-size: 17px; }
 #dak-potus .dak-quiz .dak-q { font-size: 16px; margin: 0 0 10px; line-height: 1.4; }
 #dak-potus .dak-quiz .dak-opts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 10px; }
@@ -131,10 +137,12 @@
   #dak-potus .dak-controls select { flex: 1 1 100%; order: 1; }
   #dak-potus .dak-controls button { flex: 1 1 28%; order: 2; padding: 0 6px; }
   #dak-potus .dak-play { min-width: 0; }
+  #dak-potus .dak-quiz .dak-opts button { flex-basis: 100%; }
+  #dak-potus .dak-hero .dak-share { padding: 0 12px; min-height: 40px; }
   #dak-potus .dak-tip { max-width: 250px; min-width: 200px; }
 }
 </style>
-<div class="dak-hero"><svg class="dak-flag" viewBox="0 0 76 48" aria-hidden="true" focusable="false"><rect width="76" height="48" fill="#fff"/><g fill="#B22234"><rect y="0" width="76" height="6.86"/><rect y="13.71" width="76" height="6.86"/><rect y="27.43" width="76" height="6.86"/><rect y="41.14" width="76" height="6.86"/></g><rect width="32" height="27.43" fill="#3C3B6E"/><g fill="#fff"><circle cx="6" cy="5.5" r="1.5"/><circle cx="16" cy="5.5" r="1.5"/><circle cx="26" cy="5.5" r="1.5"/><circle cx="11" cy="11.5" r="1.5"/><circle cx="21" cy="11.5" r="1.5"/><circle cx="6" cy="17.5" r="1.5"/><circle cx="16" cy="17.5" r="1.5"/><circle cx="26" cy="17.5" r="1.5"/><circle cx="11" cy="23" r="1.5"/><circle cx="21" cy="23" r="1.5"/></g></svg><div><h1>Præsidentvalg i USA</h1><div class="dak-kicker">Delstat for delstat, 1864-2024</div></div><div class="dak-stars" aria-hidden="true">&#9733; &#9733; &#9733; &#9733; &#9733;</div></div>
+<div class="dak-hero"><svg class="dak-flag" viewBox="0 0 76 48" aria-hidden="true" focusable="false"><rect width="76" height="48" fill="#fff"/><g fill="#B22234"><rect y="0" width="76" height="6.86"/><rect y="13.71" width="76" height="6.86"/><rect y="27.43" width="76" height="6.86"/><rect y="41.14" width="76" height="6.86"/></g><rect width="32" height="27.43" fill="#3C3B6E"/><g fill="#fff"><circle cx="6" cy="5.5" r="1.5"/><circle cx="16" cy="5.5" r="1.5"/><circle cx="26" cy="5.5" r="1.5"/><circle cx="11" cy="11.5" r="1.5"/><circle cx="21" cy="11.5" r="1.5"/><circle cx="6" cy="17.5" r="1.5"/><circle cx="16" cy="17.5" r="1.5"/><circle cx="26" cy="17.5" r="1.5"/><circle cx="11" cy="23" r="1.5"/><circle cx="21" cy="23" r="1.5"/></g></svg><div><h1>Præsidentvalg i USA</h1><div class="dak-kicker">Delstat for delstat, 1864-2024</div></div><button type="button" class="dak-share" id="dak-potus-share" aria-label="Del dette valg"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg><span>Del</span></button></div>
 <div class="dak-subtitle">Kortet viser, hvilken kandidat der fik flest stemmer i hver delstat ved præsidentvalgene 1864-2024.</div>
 <div class="dak-controls">
   <label for="dak-potus-year">Vælg valgår</label>
@@ -146,7 +154,7 @@
 <div class="dak-legend" id="dak-potus-legend"></div>
 <div class="dak-shades" id="dak-potus-shades"></div>
 <div class="dak-note" id="dak-potus-ynote" style="margin:0 0 8px"></div>
-<div class="dak-tools"><button type="button" id="dak-potus-img">Gem kortet som billede</button><button type="button" id="dak-potus-quizbtn" aria-expanded="false" aria-controls="dak-potus-quiz">Quiz: gæt vinderen</button><button type="button" id="dak-potus-link">Kopier link til dette valg</button><span id="dak-potus-toolmsg" role="status"></span></div>
+<div class="dak-tools"><button type="button" id="dak-potus-quizbtn" aria-expanded="false" aria-controls="dak-potus-quiz">Quiz: test din viden</button></div>
 <div class="dak-quiz" id="dak-potus-quiz" hidden></div>
 <div class="dak-view" role="group" aria-label="Visning"><button type="button" id="dak-potus-vmap" aria-pressed="true">Kort</button><button type="button" id="dak-potus-vtile" aria-pressed="false">Fliser</button></div>
 <div class="dak-mapwrap" id="dak-potus-wrap">
@@ -650,118 +658,181 @@
     ['HI', 7, 0], ['TX', 7, 3], ['FL', 7, 7]];
 
 
-  function toolMsg(t) {
-    var m = ROOT.querySelector('#dak-potus-toolmsg'); m.textContent = t;
-    setTimeout(function () { if (m.textContent === t) m.textContent = ''; }, 3500);
-  }
-  function saveImage() {
-    var clone = svgEl.cloneNode(true);
-    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    clone.setAttribute('width', 960); clone.setAttribute('height', 600);
-    Array.prototype.forEach.call(clone.querySelectorAll('path.dak-state, circle.dak-dc'), function (e) {
-      e.setAttribute('stroke', '#fff'); e.setAttribute('stroke-width', e.tagName === 'circle' ? 1 : .8); e.removeAttribute('class');
-    });
-    var tot = { D: 0, R: 0, O: 0 };
-    Object.keys(DATA[year]).forEach(function (k) { DATA[year][k].e.forEach(function (x) { tot[x[0]] += x[1]; }); });
-    var order = ['D', 'R', 'O'].filter(function (c) { return tot[c] > 0; }).sort(function (a, b) { return tot[b] - tot[a]; });
-    var inf = INFO[year], W = 1200, H = 1000, mapH = 750;
-    var cv = document.createElement('canvas'); cv.width = W; cv.height = H;
-    var cx = cv.getContext('2d');
-    var img = new Image();
-    img.onload = function () {
-      cx.fillStyle = '#fff'; cx.fillRect(0, 0, W, H);
-      cx.fillStyle = '#0F2B36'; cx.textBaseline = 'alphabetic';
-      var ff = 'Inter, Helvetica, Arial, sans-serif';
-      cx.font = '700 44px ' + ff; cx.fillText('Præsidentvalget i USA ' + year, 40, 66);
-      cx.font = '400 26px ' + ff;
-      var lead = order[0];
-      cx.fillText('Valgt: ' + (inf.names[lead] || '') + (inf.party[lead] ? ' (' + inf.party[lead] + ')' : ''), 40, 108);
-      var x = 40;
-      order.forEach(function (c) {
-        cx.fillStyle = COLORS[c][2]; cx.fillRect(x, 140, 22, 22);
-        cx.fillStyle = '#0F2B36'; cx.font = '400 22px ' + ff;
-        var t = (inf.names[c] || '') + ': ' + tot[c] + ' valgmænd';
-        cx.fillText(t, x + 32, 160); x += 32 + cx.measureText(t).width + 36;
-      });
-      cx.drawImage(img, 0, 190, W, mapH);
-      cx.fillStyle = '#4a5a50'; cx.font = '400 18px ' + ff;
-      cx.fillText('Farvens styrke viser forskellen i delstaten: lys under 5, mellem 5-10, kraftig 10-20, mørk over 20 procentpoint. Grå: deltog ikke.', 40, 970);
-      cx.fillText('Kilde: Wikipedia, resultater pr. delstat (Margin Matters) | Grafik og databehandling: Danske A-kasser', 40, 990);
-      cv.toBlob(function (b) {
-        var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'praesidentvalg-' + year + '.png';
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
-        toolMsg('Billedet er gemt.');
-      }, 'image/png');
-    };
-    img.onerror = function () { toolMsg('Billedet kunne ikke laves i denne browser.'); };
-    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(clone));
-  }
-  function copyLink() {
-    var url = location.href.split('#')[0] + '#' + year;
-    var done = function () { toolMsg('Linket er kopieret.'); };
-    var fallback = function () { window.prompt('Kopier linket:', url); };
-    try { navigator.clipboard.writeText(url).then(done, fallback); } catch (e) { fallback(); }
-  }
   function yearFromHash() {
     var m = /^#(\d{4})$/.exec(location.hash || ''); var y = m ? Number(m[1]) : 0;
     return YEARS.indexOf(y) >= 0 ? y : 0;
   }
 
-  var quizEl = ROOT.querySelector('#dak-potus-quiz'), quizRight = 0, quizAll = 0, quizCur = null;
-  function quizNew() {
-    var tries = 0;
-    while (tries++ < 200) {
-      var y = YEARS[Math.floor(Math.random() * YEARS.length)];
-      var ks = Object.keys(DATA[y]).filter(function (k) { return k.indexOf('-') < 0 && !DATA[y][k].l && DATA[y][k].c.length > 1; });
-      if (!ks.length) continue;
-      var a = ks[Math.floor(Math.random() * ks.length)];
-      if (!states[a]) continue;
-      var cs = DATA[y][a].c.slice().sort(function (p, q) { return q[1] - p[1]; });
-      var opts = cs.slice(0, 3).filter(function (c) { return c[1] > 0; });
-      if (opts.length < 2) continue;
-      var m = opts[0][1] - opts[1][1];
-      var ev = 0; DATA[y][a].e.forEach(function (x) { ev += x[1]; });
-      var shuffled = opts.slice().sort(function () { return Math.random() - .5; });
-      return { y: y, a: a, win: opts[0], opts: shuffled, margin: m, ev: ev, done: false };
-    }
-    return null;
+  function toast(t) {
+    var old = document.querySelector('.dak-toast'); if (old) old.remove();
+    var el = document.createElement('div'); el.className = 'dak-toast'; el.setAttribute('role', 'status'); el.textContent = t;
+    document.body.appendChild(el);
+    setTimeout(function () { if (el.parentNode) el.remove(); }, 3500);
+  }
+  function baseUrl() {
+    if (location.host === 'ai-michelklos.github.io') return location.href.replace(/[?#].*$/, '').replace(/[^\/]*$/, '');
+    return 'https://ai-michelklos.github.io/potus/';
+  }
+  function copyText(t, done) {
+    var fb = function () { window.prompt('Kopier teksten:', t); };
+    try { navigator.clipboard.writeText(t).then(done, fb); } catch (e) { fb(); }
+  }
+  function sharePayload(title, text, url) {
+    var copied = function () { toast('Teksten og linket er kopieret.'); };
+    if (navigator.share) {
+      navigator.share({ title: title, text: text, url: url }).catch(function (e) {
+        if (e && e.name === 'AbortError') return;
+        copyText(text + ' ' + url, copied);
+      });
+    } else copyText(text + ' ' + url, copied);
+  }
+  function evTot(y) {
+    var tot = { D: 0, R: 0, O: 0 };
+    Object.keys(DATA[y]).forEach(function (k) { DATA[y][k].e.forEach(function (x) { tot[x[0]] += x[1]; }); });
+    return tot;
+  }
+  function winnerOf(y) {
+    var tot = evTot(y);
+    var cl = ['D', 'R', 'O'].sort(function (a, b) { return tot[b] - tot[a]; });
+    var inf = INFO[y];
+    return { cls: cl[0], name: inf.names[cl[0]], party: inf.party[cl[0]] || '', ev: tot[cl[0]], name2: inf.names[cl[1]], ev2: tot[cl[1]], tot: tot };
+  }
+  function shareMap() {
+    var w = winnerOf(year);
+    var text = 'Præsidentvalget i USA ' + year + ': ' + w.name + (w.party ? ' (' + w.party + ')' : '') + ' vandt med ' + w.ev + ' valgmænd. Se kortet delstat for delstat.';
+    sharePayload('Præsidentvalg i USA ' + year, text, baseUrl() + 'valg/' + year + '.html');
+  }
+
+  /* ---------- Quiz ---------- */
+  var quizEl = ROOT.querySelector('#dak-potus-quiz'), qState = null;
+  function rnd(n) { return Math.floor(Math.random() * n); }
+  function pick(a) { return a[rnd(a.length)]; }
+  function shuffle(a) { return a.slice().sort(function () { return Math.random() - .5; }); }
+  function mk(q, right, wrongs, fact) {
+    var seen = {}, w = [];
+    wrongs.forEach(function (x) { if (x !== right && !seen[x] && w.length < 3) { seen[x] = 1; w.push(x); } });
+    if (w.length < 3) return null;
+    var opts = shuffle([right].concat(w));
+    return { q: q, opts: opts, ans: opts.indexOf(right), fact: fact };
+  }
+  var QYEARS = YEARS.filter(function (y) { return y >= 1952; });
+  function mainRecY(y, a) { var d = DATA[y]; return d[a] || d[a + '-AL'] || null; }
+  function gapOf(r) {
+    if (!r || r.l || !r.c || r.c.length < 2) return null;
+    var cs = r.c.slice().sort(function (p, q) { return q[1] - p[1]; });
+    return cs[0][1] - cs[1][1];
+  }
+  function stNames(abbrs, not) { return abbrs.filter(function (a) { return states[a] && a !== not; }).map(function (a) { return states[a].name; }); }
+  var BIG = ['TX', 'CA', 'NY', 'FL', 'OH', 'PA', 'IL', 'WI', 'MI', 'GA', 'AZ'];
+
+  function qWinner() {
+    var y = pick(QYEARS), w = winnerOf(y), others = [];
+    QYEARS.forEach(function (z) { if (z !== y) others.push(winnerOf(z).name); });
+    return mk('Hvem vandt præsidentvalget i ' + y + '?', w.name, [w.name2].concat(shuffle(others)),
+      w.name + (w.party ? ' (' + w.party + ')' : '') + ' fik ' + w.ev + ' valgmænd mod ' + w.ev2 + ' til ' + w.name2 + '.');
+  }
+  function qFirst() {
+    var first = {};
+    YEARS.forEach(function (y) { var n = winnerOf(y).name; if (!(n in first)) first[n] = y; });
+    var pool = Object.keys(first).filter(function (n) { return first[n] >= 1932; });
+    var n = pick(pool), y = first[n];
+    var near = YEARS.filter(function (z) { return z !== y && Math.abs(z - y) <= 20; });
+    return mk('I hvilket år blev ' + n + ' valgt til præsident første gang?', String(y), shuffle(near).map(String),
+      n + ' vandt første gang ved valget i ' + y + '.');
+  }
+  function qClosest() {
+    var y = pick([1960, 1968, 1976, 2000, 2004, 2016, 2020, 2024].filter(function (z) { return DATA[z]; })), best = null;
+    Object.keys(states).forEach(function (a) { var m = gapOf(mainRecY(y, a)); if (m !== null && (!best || m < best.m)) best = { a: a, m: m }; });
+    if (!best) return null;
+    return mk('Hvilken delstat var tættest ved præsidentvalget i ' + y + '?', states[best.a].name, shuffle(stNames(BIG, best.a)),
+      states[best.a].name + ' var tættest: kun ' + fmtM(best.m) + ' procentpoint mellem nr. 1 og nr. 2.');
+  }
+  function qPopLoser() {
+    var y = pick([1876, 1888, 2000, 2016]), nat = INFO[y].nat.slice().sort(function (a, b) { return b[1] - a[1]; }), top = nat[0], w = winnerOf(y), others = [];
+    QYEARS.forEach(function (z) { others.push(winnerOf(z).name); });
+    return mk('Hvem fik flest stemmer på landsplan i ' + y + ', men tabte alligevel valget?', top[0], [w.name].concat(shuffle(others)),
+      top[0] + ' fik ' + fmt1.format(top[1]) + ' % af stemmerne, men ' + w.name + ' fik flest valgmænd (' + w.ev + ' mod ' + w.ev2 + ').');
+  }
+  function qNever() {
+    return mk('Hvem af disse sad som præsident uden nogensinde at være valgt til hverken præsident eller vicepræsident?', 'Gerald Ford', ['Jimmy Carter', 'Ronald Reagan', 'John F. Kennedy'],
+      'Gerald Ford blev vicepræsident i 1973 og præsident i 1974 uden at være valgt til nogen af dem. Se noten ved valget i 1976.');
+  }
+  function qMajority() {
+    if (Math.random() < .5) return mk('Hvor mange valgmænd skal en kandidat mindst have for at vinde præsidentvalget i dag?', '270', ['218', '300', '538'], 'Der er 538 valgmænd i alt, så flertallet er 270.');
+    return mk('Hvor mange valgmænd er der i alt ved et præsidentvalg i dag?', '538', ['435', '270', '100'], 'Der er 538 valgmænd i alt. Man skal have mindst 270 for at vinde.');
+  }
+  function qThird() {
+    var ys = [1912, 1968, 1980, 1992, 1996].filter(function (z) { return DATA[z]; }), y = pick(ys), top = null;
+    INFO[y].nat.forEach(function (c) { if (c[2] === 'O' && !top) top = c; });
+    if (!top) return null;
+    var names = [];
+    ys.forEach(function (z) { INFO[z].nat.forEach(function (c) { if (c[2] === 'O') names.push(c[0]); }); });
+    var w = winnerOf(y), ev = evTot(y).O;
+    return mk('Hvem var den største tredjepartskandidat ved valget i ' + y + '?', top[0], shuffle(names).concat([w.name2]),
+      top[0] + ' fik ' + fmt1.format(top[1]) + ' % af stemmerne' + (ev ? ' og ' + ev + ' valgmænd.' : ', men ingen valgmænd.'));
+  }
+  function qTipping() {
+    var y = pick([1960, 1976, 2000, 2004, 2012, 2016, 2020, 2024].filter(function (z) { return DATA[z]; })), w = winnerOf(y), list = [], all = 0;
+    Object.keys(DATA[y]).forEach(function (k) { DATA[y][k].e.forEach(function (x) { all += x[1]; }); });
+    Object.keys(states).forEach(function (a) {
+      var ev = 0;
+      Object.keys(DATA[y]).forEach(function (k) { if (k === a || k.indexOf(a + '-') === 0) DATA[y][k].e.forEach(function (x) { if (x[0] === w.cls) ev += x[1]; }); });
+      if (!ev) return;
+      var m = gapOf(mainRecY(y, a));
+      list.push({ a: a, ev: ev, m: m === null ? 100 : m });
+    });
+    list.sort(function (p, q) { return q.m - p.m; });
+    var need = Math.floor(all / 2) + 1, cum = 0, hit = null;
+    for (var i = 0; i < list.length; i++) { cum += list[i].ev; if (cum >= need) { hit = list[i]; break; } }
+    if (!hit || hit.m === 100) return null;
+    return mk('Hvilken delstat blev afgørende ved valget i ' + y + '?', states[hit.a].name, shuffle(stNames(BIG, hit.a)),
+      'Stiller man delstaterne op efter vinderens forspring, var det i ' + states[hit.a].name + ', at vinderen nåede flertallet på ' + need + ' valgmænd.');
+  }
+
+  function quizStart() {
+    var gens = [qWinner, qWinner, qFirst, qFirst, qClosest, qPopLoser, qNever, qMajority, qThird, qTipping], qs = [], seen = {};
+    gens.forEach(function (g) {
+      var t = 0, q;
+      do { q = g(); t++; } while ((!q || seen[q.q]) && t < 40);
+      if (q && !seen[q.q]) { seen[q.q] = 1; qs.push(q); }
+    });
+    qState = { qs: shuffle(qs), i: 0, score: 0, done: false };
   }
   function quizRender() {
-    var q = quizCur;
-    var h = '<h2>Gæt vinderen i delstaten</h2>';
-    if (!q) { quizEl.innerHTML = h + '<p>Kunne ikke lave et spørgsmål.</p>'; return; }
-    h += '<p class="dak-q">Hvem fik flest stemmer i <b>' + states[q.a].name + '</b> ved præsidentvalget i <b>' + q.y + '</b>? <span class="dak-sub">(' + q.ev + ' valgmænd)</span></p><div class="dak-opts">';
-    q.opts.forEach(function (c, i) {
-      var p = INFO[q.y].party[c[2]];
-      h += '<button type="button" data-i="' + i + '"' + (q.done ? ' disabled' : '') + '>' + c[0] + (p && c[2] !== 'O' ? ' (' + p + ')' : '') + '</button>';
-    });
-    h += '</div><div class="dak-fb" role="status"></div><div class="dak-acts"><span>Rigtige: <b>' + quizRight + '</b> af ' + quizAll + '</span>';
-    if (q.done) h += '<button type="button" data-act="next">Næste spørgsmål</button><button type="button" data-act="show">Se året på kortet</button>';
-    h += '</div>';
+    var s = qState, n = s.qs.length, h = '<h2>Test din viden om præsidentvalgene</h2>';
+    if (s.i >= n) {
+      var msg = s.score >= n - 1 ? 'Flot! Du kender virkelig dine amerikanske valg.' : s.score >= n * .7 ? 'Rigtig godt klaret.' : s.score >= n * .4 ? 'En fin start. Prøv kortet og spil igen.' : 'Udforsk kortet og prøv igen, så går det bedre.';
+      quizEl.innerHTML = h + '<p class="dak-q"><b>' + s.score + ' af ' + n + ' rigtige.</b> ' + msg + '</p><div class="dak-acts"><button type="button" id="dak-q-share">Udfordr en ven</button><button type="button" id="dak-q-again">Spil igen</button></div>';
+      quizEl.querySelector('#dak-q-share').addEventListener('click', function () {
+        sharePayload('Quiz om amerikanske præsidentvalg', 'Jeg fik ' + s.score + ' af ' + n + ' rigtige i quizzen om amerikanske præsidentvalg. Kan du slå mig?', baseUrl());
+      });
+      quizEl.querySelector('#dak-q-again').addEventListener('click', function () { quizStart(); quizRender(); });
+      return;
+    }
+    var q = s.qs[s.i];
+    h += '<div class="dak-qprog">Spørgsmål ' + (s.i + 1) + ' af ' + n + ' &nbsp;|&nbsp; Point: ' + s.score + '</div><p class="dak-q">' + q.q + '</p><div class="dak-opts">';
+    q.opts.forEach(function (o, i) { h += '<button type="button" data-i="' + i + '">' + o + '</button>'; });
+    h += '</div><div class="dak-fb" role="status"></div><div class="dak-acts"></div>';
     quizEl.innerHTML = h;
-    Array.prototype.forEach.call(quizEl.querySelectorAll('.dak-opts button'), function (b) {
+    var btns = quizEl.querySelectorAll('.dak-opts button'), answered = false;
+    Array.prototype.forEach.call(btns, function (b) {
       b.addEventListener('click', function () {
-        if (q.done) return;
-        q.done = true; quizAll++;
-        var pick = q.opts[Number(b.getAttribute('data-i'))], ok = pick === q.win;
-        if (ok) quizRight++;
-        quizRender();
-        Array.prototype.forEach.call(quizEl.querySelectorAll('.dak-opts button'), function (bb) {
-          var c = q.opts[Number(bb.getAttribute('data-i'))];
-          if (c === q.win) bb.classList.add('dak-ok'); else if (c === pick) bb.classList.add('dak-bad');
-        });
-        quizEl.querySelector('.dak-fb').innerHTML = (ok ? '<b>Rigtigt!</b> ' : '<b>Ikke helt.</b> ') + q.win[0] + ' vandt med ' + fmt1.format(q.win[1]) + ' % af stemmerne, ' + fmtM(q.margin) + ' procentpoint foran nr. to.';
+        if (answered) return; answered = true;
+        var i = Number(b.getAttribute('data-i')), ok = i === q.ans;
+        if (ok) s.score++;
+        Array.prototype.forEach.call(btns, function (bb) { bb.disabled = true; });
+        btns[q.ans].classList.add('dak-ok'); if (!ok) b.classList.add('dak-bad');
+        quizEl.querySelector('.dak-fb').innerHTML = (ok ? '<b>Rigtigt!</b> ' : '<b>Ikke helt.</b> ') + q.fact;
+        var acts = quizEl.querySelector('.dak-acts');
+        acts.innerHTML = '<button type="button" id="dak-q-next">' + (s.i + 1 >= n ? 'Se dit resultat' : 'Næste spørgsmål') + '</button>';
+        acts.querySelector('#dak-q-next').addEventListener('click', function () { s.i++; quizRender(); });
+        acts.querySelector('#dak-q-next').focus();
       });
     });
-    var nx = quizEl.querySelector('[data-act="next"]'), sh = quizEl.querySelector('[data-act="show"]');
-    if (nx) nx.addEventListener('click', function () { quizCur = quizNew(); quizRender(); });
-    if (sh) sh.addEventListener('click', function () { year = Number(q.y); paint(); select(q.a); wrap.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
   }
   function toggleQuiz() {
-    var btn = ROOT.querySelector('#dak-potus-quizbtn');
-    var open = quizEl.hasAttribute('hidden');
-    if (open) { quizEl.removeAttribute('hidden'); if (!quizCur) quizCur = quizNew(); quizRender(); } else quizEl.setAttribute('hidden', '');
+    var btn = ROOT.querySelector('#dak-potus-quizbtn'), open = quizEl.hasAttribute('hidden');
+    if (open) { quizEl.removeAttribute('hidden'); if (!qState) quizStart(); quizRender(); } else quizEl.setAttribute('hidden', '');
     btn.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
   function paint(keepPlay) {
@@ -869,9 +940,8 @@
     hsel.addEventListener('change', function () { select(hsel.value); });
     playBtn.addEventListener('click', togglePlay);
     nextBtn.addEventListener('click', function () { var i = YEARS.indexOf(year); if (i < YEARS.length - 1) { year = YEARS[i + 1]; paint(); } });
-    ROOT.querySelector('#dak-potus-img').addEventListener('click', saveImage);
+    ROOT.querySelector('#dak-potus-share').addEventListener('click', shareMap);
     ROOT.querySelector('#dak-potus-quizbtn').addEventListener('click', toggleQuiz);
-    ROOT.querySelector('#dak-potus-link').addEventListener('click', copyLink);
     window.addEventListener('hashchange', function () { var hy = yearFromHash(); if (hy && hy !== year) { year = hy; paint(); } });
     var h0 = yearFromHash(); if (h0) year = h0;
     selected = 'OH'; paths['OH'].classList.add('dak-sel'); hsel.value = 'OH';
