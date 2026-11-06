@@ -96,6 +96,8 @@
 #dak-potus button.dak-tile .dak-ta { font-size: 15px; font-weight: 700; }
 #dak-potus button.dak-tile .dak-te { font-size: 11px; opacity: .9; }
 #dak-potus button.dak-tile.dak-sel { outline: 3px solid #0F2B36; outline-offset: 1px; position: relative; z-index: 1; }
+#dak-potus svg path.dak-state.dak-third { stroke: #7B4FA0; stroke-width: 3; }
+#dak-potus button.dak-tile.dak-third { box-shadow: inset 0 0 0 3px #7B4FA0; }
 #dak-potus button.dak-tile.dak-flip { box-shadow: inset 0 0 0 3px #F2B705; }
 
 #dak-potus .dak-pvnote { margin: 0 0 10px; padding: 8px 12px; border-left: 4px solid #F2B705; background: #FFF8E1; border-radius: 0 8px 8px 0; font-size: 14px; line-height: 1.45; color: #0F2B36; }
@@ -345,6 +347,9 @@
       html += '<div class="dak-item"><span class="dak-sw" style="background:' + COLORS[cls][2] + '"></span><span><b>' + name + '</b>' +
         (party ? ' <span class="dak-sub">(' + party + ')</span>' : '') + ': ' + evTxt + shareTxt + '</span></div>';
     });
+    if (!tot.O && pop.O && pop.O[1] >= 1) {
+      html += '<div class="dak-item"><span class="dak-sw" style="background:' + COLORS.O[2] + '"></span><span><b>' + pop.O[0] + '</b>' + (inf.party.O ? ' <span class="dak-sub">(' + inf.party.O + ')</span>' : '') + ': ingen valgmænd, ' + fmt1.format(pop.O[1]) + ' % af stemmerne</span></div>';
+    }
     html += '</div>';
     legendEl.innerHTML = html;
     loadPortrait(winName);
@@ -507,6 +512,32 @@
     }
     return null;
   }
+  var thirdSet = [], showThird = false;
+  function thirdInfo() {
+    var top = null;
+    INFO[year].nat.forEach(function (c) { if (c[2] === 'O' && !top) top = c; });
+    if (!top || top[1] < 2) return null;
+    var best = null, set = [];
+    Object.keys(states).forEach(function (a) {
+      var r = stateRecs(a).main; if (!r || r.l) return;
+      var cs = sortedCands(r), idx = -1;
+      cs.forEach(function (c, i) { if (idx < 0 && c[0] === top[0]) idx = i; });
+      if (idx < 0) return;
+      if (!best || cs[idx][1] > best.v) best = { a: a, v: cs[idx][1] };
+      if (idx <= 1) set.push(a);
+    });
+    return { name: top[0], share: top[1], best: best, set: set };
+  }
+  function markThird() {
+    Object.keys(paths).forEach(function (a) { paths[a].classList.remove('dak-third'); });
+    Object.keys(tiles).forEach(function (a) { tiles[a].classList.remove('dak-third'); });
+    if (!showThird) return;
+    thirdSet.forEach(function (a) {
+      if (tiles[a]) tiles[a].classList.add('dak-third');
+      var p = paths[a]; if (!p || a === 'DC') return;
+      p.classList.add('dak-third'); p.parentNode.appendChild(p);
+    });
+  }
   function renderChips() {
     var i = YEARS.indexOf(year);
     var html = '';
@@ -520,6 +551,11 @@
     if (best) html += '<span class="dak-chip">Tætteste delstat: <b>' + states[best.a].name + '</b> (' + new Intl.NumberFormat('da-DK', { minimumFractionDigits: best.m < 1 ? 2 : 1, maximumFractionDigits: best.m < 1 ? 2 : 1 }).format(best.m) + ' procentpoint)</span>';
     var tp = tippingState();
     if (tp && !tp.legis && states[tp.a]) html += '<span class="dak-chip" title="Delstaterne sorteret efter vinderens forspring. Den delstat, der får vinderen over flertallet, er den afgørende.">Afgørende delstat: <b>' + states[tp.a].name + '</b> (vinderens forspring ' + new Intl.NumberFormat('da-DK', { minimumFractionDigits: tp.m < 1 ? 2 : 1, maximumFractionDigits: tp.m < 1 ? 2 : 1 }).format(tp.m) + ' procentpoint). Her nåede vinderen flertallet på ' + tp.need + ' valgmænd.</span>';
+    var th = thirdInfo(); thirdSet = th ? th.set : [];
+    if (th) {
+      html += '<span class="dak-chip">Største tredjepartskandidat: <b>' + th.name + '</b> (' + fmt1.format(th.share) + ' % på landsplan)' + (th.best ? ', bedst i <b>' + states[th.best.a].name + '</b> (' + fmt1.format(th.best.v) + ' %)' : '') + '</span>';
+      if (th.set.length) html += '<label><input type="checkbox" id="dak-potus-third"' + (showThird ? ' checked' : '') + '> Fremhæv delstater hvor kandidaten blev nr. 1 eller 2 (' + th.set.length + ')</label>';
+    }
     flips = [];
     if (i > 0) {
       var prev = YEARS[i - 1];
@@ -540,6 +576,9 @@
     });
     var cb = chipsEl.querySelector('#dak-potus-flip');
     if (cb) cb.addEventListener('change', function () { showFlips = cb.checked; markFlips(); });
+    var cb3 = chipsEl.querySelector('#dak-potus-third');
+    if (cb3) cb3.addEventListener('change', function () { showThird = cb3.checked; markThird(); });
+    markThird();
     markFlips();
   }
   var flips = [];
