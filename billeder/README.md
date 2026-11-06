@@ -35,3 +35,4 @@ Filen skal hedde som herunder og være `.jpg`, `.png` eller `.webp`. Billedet be
 | `joe-biden` | Joe Biden | 2020 |
 | `gerald-ford` | Gerald Ford (aldrig valgt, vises i en note ved 1976) | 1976 |
 | `andrew-johnson` | Andrew Johnson (aldrig valgt, vises i en note ved 1868) | 1868 |
+| `chester-a-arthur` | Chester A. Arthur (aldrig valgt, vises i en note ved 1884) | 1884 |
