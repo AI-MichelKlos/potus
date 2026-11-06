@@ -95,6 +95,16 @@
 #dak-potus .dak-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 8px; }
 #dak-potus .dak-tools button { min-height: 38px; padding: 0 14px; font-size: 14px; }
 #dak-potus #dak-potus-toolmsg { font-size: 13px; color: #4a5a50; }
+#dak-potus .dak-quiz { margin: 0 0 10px; padding: 12px 14px; border: 1px solid #B9C4BC; border-radius: 10px; background: #F7FAF7; }
+#dak-potus .dak-quiz h2 { margin: 0 0 6px; font-size: 17px; }
+#dak-potus .dak-quiz .dak-q { font-size: 16px; margin: 0 0 10px; line-height: 1.4; }
+#dak-potus .dak-quiz .dak-opts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 10px; }
+#dak-potus .dak-quiz .dak-opts button { min-height: 44px; padding: 6px 14px; font-size: 15px; text-align: left; }
+#dak-potus .dak-quiz .dak-opts button.dak-ok { background: #6B9E78; color: #fff; border-color: #6B9E78; }
+#dak-potus .dak-quiz .dak-opts button.dak-bad { background: #F3D4D0; border-color: #C9574A; }
+#dak-potus .dak-quiz .dak-fb { font-size: 14px; line-height: 1.5; margin: 0 0 10px; }
+#dak-potus .dak-quiz .dak-acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px; }
+#dak-potus .dak-quiz .dak-acts button { min-height: 40px; padding: 0 14px; font-size: 14px; }
 #dak-potus .dak-view { display: inline-flex; margin: 0 0 8px; border: 1px solid #B9C4BC; border-radius: 8px; overflow: hidden; background: #fff; }
 #dak-potus .dak-view button { border: 0; border-radius: 0; min-height: 38px; padding: 0 16px; background: #fff; font-size: 14px; }
 #dak-potus .dak-view button[aria-pressed="true"] { background: #6B9E78; color: #fff; }
@@ -143,7 +153,8 @@
 <div class="dak-shades" id="dak-potus-shades"></div>
 <div class="dak-note" id="dak-potus-ynote" style="margin:0 0 8px"></div>
 <div class="dak-chips" id="dak-potus-chips"></div>
-<div class="dak-tools"><button type="button" id="dak-potus-img">Gem kortet som billede</button><button type="button" id="dak-potus-link">Kopier link til dette valg</button><span id="dak-potus-toolmsg" role="status"></span></div>
+<div class="dak-tools"><button type="button" id="dak-potus-img">Gem kortet som billede</button><button type="button" id="dak-potus-quizbtn" aria-expanded="false" aria-controls="dak-potus-quiz">Quiz: gæt vinderen</button><button type="button" id="dak-potus-link">Kopier link til dette valg</button><span id="dak-potus-toolmsg" role="status"></span></div>
+<div class="dak-quiz" id="dak-potus-quiz" hidden></div>
 <div class="dak-view" role="group" aria-label="Visning"><button type="button" id="dak-potus-vmap" aria-pressed="true">Kort</button><button type="button" id="dak-potus-vtile" aria-pressed="false">Fliser</button></div>
 <div class="dak-mapwrap" id="dak-potus-wrap">
   <svg id="dak-potus-svg" viewBox="0 0 960 600" role="img" aria-label="Kort over USA med resultatet af præsidentvalget i hver delstat"></svg>
@@ -157,7 +168,7 @@
   <div class="dak-hnote">Hvert felt er ét valg (årstal med to cifre). Tryk på et felt for at se det valg på kortet. Mørkere farve betyder større forskel i delstaten.</div>
 </div>
 <div class="dak-note">Farven viser, hvem der fik flest stemmer i delstaten, og jo mørkere farve, jo større forskel. Valgmænd er fordelt efter delstatens resultat, også for delstater hvor valgmændene i datidens regler ikke blev talt med (det fremgår af noten). Enkelte valgmænd har stemt anderledes end deres delstat, fx 7 i 2016, så de officielle totaler kan afvige med få stemmer. Maine og Nebraska fordeler en del af deres valgmænd efter kongresdistrikter, når data findes. Under "Fliser" er hver delstat en lige stor firkant med antallet af valgmænd, så små delstater er lette at se og trykke på. Tryk eller hold musen over en delstat for detaljer.</div>
-<div class="dak-source">Kilde: Wikipedia, resultater pr. delstat (samlet i datasættet Margin Matters) &nbsp;|&nbsp; Grafik og databehandling: Danske A-kasser</div>
+<div class="dak-source">Kilde: Wikipedia, resultater pr. delstat (samlet i datasættet Margin Matters) &nbsp;|&nbsp; Grafik og databehandling: Danske A-kasser &nbsp;|&nbsp; Portrætter (hvis vist): Library of Congress</div>
 <script>
 (function () {
   var ROOT = document.getElementById('dak-potus');
@@ -701,6 +712,63 @@
     var m = /^#(\d{4})$/.exec(location.hash || ''); var y = m ? Number(m[1]) : 0;
     return YEARS.indexOf(y) >= 0 ? y : 0;
   }
+
+  var quizEl = ROOT.querySelector('#dak-potus-quiz'), quizRight = 0, quizAll = 0, quizCur = null;
+  function quizNew() {
+    var tries = 0;
+    while (tries++ < 200) {
+      var y = YEARS[Math.floor(Math.random() * YEARS.length)];
+      var ks = Object.keys(DATA[y]).filter(function (k) { return k.indexOf('-') < 0 && !DATA[y][k].l && DATA[y][k].c.length > 1; });
+      if (!ks.length) continue;
+      var a = ks[Math.floor(Math.random() * ks.length)];
+      if (!states[a]) continue;
+      var cs = DATA[y][a].c.slice().sort(function (p, q) { return q[1] - p[1]; });
+      var opts = cs.slice(0, 3).filter(function (c) { return c[1] > 0; });
+      if (opts.length < 2) continue;
+      var m = opts[0][1] - opts[1][1];
+      var ev = 0; DATA[y][a].e.forEach(function (x) { ev += x[1]; });
+      var shuffled = opts.slice().sort(function () { return Math.random() - .5; });
+      return { y: y, a: a, win: opts[0], opts: shuffled, margin: m, ev: ev, done: false };
+    }
+    return null;
+  }
+  function quizRender() {
+    var q = quizCur;
+    var h = '<h2>Gæt vinderen i delstaten</h2>';
+    if (!q) { quizEl.innerHTML = h + '<p>Kunne ikke lave et spørgsmål.</p>'; return; }
+    h += '<p class="dak-q">Hvem fik flest stemmer i <b>' + states[q.a].name + '</b> ved præsidentvalget i <b>' + q.y + '</b>? <span class="dak-sub">(' + q.ev + ' valgmænd)</span></p><div class="dak-opts">';
+    q.opts.forEach(function (c, i) {
+      var p = INFO[q.y].party[c[2]];
+      h += '<button type="button" data-i="' + i + '"' + (q.done ? ' disabled' : '') + '>' + c[0] + (p && c[2] !== 'O' ? ' (' + p + ')' : '') + '</button>';
+    });
+    h += '</div><div class="dak-fb" role="status"></div><div class="dak-acts"><span>Rigtige: <b>' + quizRight + '</b> af ' + quizAll + '</span>';
+    if (q.done) h += '<button type="button" data-act="next">Næste spørgsmål</button><button type="button" data-act="show">Se året på kortet</button>';
+    h += '</div>';
+    quizEl.innerHTML = h;
+    Array.prototype.forEach.call(quizEl.querySelectorAll('.dak-opts button'), function (b) {
+      b.addEventListener('click', function () {
+        if (q.done) return;
+        q.done = true; quizAll++;
+        var pick = q.opts[Number(b.getAttribute('data-i'))], ok = pick === q.win;
+        if (ok) quizRight++;
+        quizRender();
+        Array.prototype.forEach.call(quizEl.querySelectorAll('.dak-opts button'), function (bb) {
+          var c = q.opts[Number(bb.getAttribute('data-i'))];
+          if (c === q.win) bb.classList.add('dak-ok'); else if (c === pick) bb.classList.add('dak-bad');
+        });
+        quizEl.querySelector('.dak-fb').innerHTML = (ok ? '<b>Rigtigt!</b> ' : '<b>Ikke helt.</b> ') + q.win[0] + ' vandt med ' + fmt1.format(q.win[1]) + ' % af stemmerne, ' + fmtM(q.margin) + ' procentpoint foran nr. to.';
+      });
+    });
+    var nx = quizEl.querySelector('[data-act="next"]'), sh = quizEl.querySelector('[data-act="show"]');
+    if (nx) nx.addEventListener('click', function () { quizCur = quizNew(); quizRender(); });
+    if (sh) sh.addEventListener('click', function () { year = Number(q.y); paint(); select(q.a); wrap.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  }
+  function toggleQuiz() {
+    var btn = ROOT.querySelector('#dak-potus-quizbtn');
+    var open = quizEl.hasAttribute('hidden');
+    if (open) { quizEl.removeAttribute('hidden'); if (!quizCur) quizCur = quizNew(); quizRender(); } else quizEl.setAttribute('hidden', '');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
   function paint(keepPlay) {
     if (!keepPlay) stopPlay();
     Object.keys(paths).forEach(function (a) {
@@ -802,6 +870,7 @@
     playBtn.addEventListener('click', togglePlay);
     nextBtn.addEventListener('click', function () { var i = YEARS.indexOf(year); if (i < YEARS.length - 1) { year = YEARS[i + 1]; paint(); } });
     ROOT.querySelector('#dak-potus-img').addEventListener('click', saveImage);
+    ROOT.querySelector('#dak-potus-quizbtn').addEventListener('click', toggleQuiz);
     ROOT.querySelector('#dak-potus-link').addEventListener('click', copyLink);
     window.addEventListener('hashchange', function () { var hy = yearFromHash(); if (hy && hy !== year) { year = hy; paint(); } });
     var h0 = yearFromHash(); if (h0) year = h0;
