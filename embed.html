@@ -485,6 +485,24 @@
     var cs = r.c.slice().sort(function (a, b) { return b[1] - a[1]; });
     return cs[0][2];
   }
+  function tippingState() {
+    var wc = electedCls(year), list = [], total = 0, cum = 0;
+    Object.keys(states).forEach(function (a) {
+      var recs = stateRecs(a); if (!recs.main) return;
+      var ev = evByCls(recs); total += ev.D + ev.R + ev.O;
+      if (!ev[wc]) return;
+      var cs = sortedCands(recs.main);
+      var m = recs.main.l ? 100 : (cs.length > 1 ? cs[0][1] - cs[1][1] : 100);
+      list.push({ a: a, ev: ev[wc], m: m });
+    });
+    list.sort(function (x, y) { return y.m - x.m; });
+    var need = Math.floor(total / 2) + 1;
+    for (var i = 0; i < list.length; i++) {
+      cum += list[i].ev;
+      if (cum >= need) return { a: list[i].a, m: list[i].m, cum: cum, need: need, legis: list[i].m === 100 };
+    }
+    return null;
+  }
   function renderChips() {
     var i = YEARS.indexOf(year);
     var html = '';
@@ -496,6 +514,8 @@
       if (best === null || m < best.m) best = { a: a, m: m };
     });
     if (best) html += '<span class="dak-chip">Tætteste delstat: <b>' + states[best.a].name + '</b> (' + new Intl.NumberFormat('da-DK', { minimumFractionDigits: best.m < 1 ? 2 : 1, maximumFractionDigits: best.m < 1 ? 2 : 1 }).format(best.m) + ' procentpoint)</span>';
+    var tp = tippingState();
+    if (tp && !tp.legis && states[tp.a]) html += '<span class="dak-chip" title="Delstaterne sorteret efter vinderens forspring. Den delstat, der får vinderen over flertallet, er den afgørende.">Afgørende delstat: <b>' + states[tp.a].name + '</b> (vinderens forspring ' + new Intl.NumberFormat('da-DK', { minimumFractionDigits: tp.m < 1 ? 2 : 1, maximumFractionDigits: tp.m < 1 ? 2 : 1 }).format(tp.m) + ' procentpoint, bragte vinderen op på ' + tp.cum + ' af ' + tp.need + ' nødvendige valgmænd)</span>';
     flips = [];
     if (i > 0) {
       var prev = YEARS[i - 1];
