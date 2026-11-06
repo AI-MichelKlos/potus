@@ -811,8 +811,32 @@ body{margin:0 auto;padding:12px 12px 28px;max-width:1100px}
       'Stiller man delstaterne op efter vinderens forspring, var det i ' + states[hit.a].name + ', at vinderen nåede flertallet på ' + need + ' valgmænd.');
   }
 
+  var SYS = [
+    ['Hvor mange senatorer har hver delstat?', '2', ['1', '3', '5'], 'Alle 50 delstater har to senatorer, så Senatet har 100 medlemmer.'],
+    ['Hvor mange medlemmer har Repræsentanternes Hus?', '435', ['100', '270', '538'], 'Huset har 435 medlemmer, fordelt på delstaterne efter indbyggertal.'],
+    ['Hvor mange år varer en senators valgperiode?', '6 år', ['2 år', '4 år', '8 år'], 'Senatorer vælges for seks år, og cirka en tredjedel er på valg hvert andet år.'],
+    ['Hvor mange år varer et medlem af Repræsentanternes Hus sin valgperiode?', '2 år', ['4 år', '6 år', '1 år'], 'Alle 435 pladser i Huset er på valg hvert andet år.'],
+    ['Hvor mange dommere er der i Højesteret?', '9', ['7', '11', '12'], 'Højesteret har ni dommere, som sidder på livstid.'],
+    ['Hvor mange valgmænd skal en kandidat mindst have for at vinde præsidentvalget?', '270', ['200', '435', '538'], 'Der er 538 valgmænd i alt, så 270 er et flertal.'],
+    ['Hvem er formand for Senatet?', 'Vicepræsidenten', ['Talmanden', 'Højesterets øverste dommer', 'Præsidenten'], 'Vicepræsidenten leder Senatet, men stemmer kun, hvis der er stemmelighed.'],
+    ['Hvem leder Repræsentanternes Hus?', 'Talmanden', ['Vicepræsidenten', 'Senatets flertalsleder', 'Præsidenten'], 'Lederen af Huset hedder talmanden (Speaker of the House) og vælges af husets medlemmer.'],
+    ['Hvor mange stemmer skal der som regel til i Senatet for at stoppe en filibuster?', '60', ['51', '67', '75'], 'Det hedder cloture og kræver 60 af de 100 stemmer. Derfor kan 41 senatorer blokere de fleste love.'],
+    ['Hvor stort et flertal skal der til for at tilsidesætte et præsidentveto?', 'To tredjedele i begge kamre', ['Simpelt flertal i Huset', 'Tre fjerdedele i Senatet', 'Et flertal i Højesteret'], 'Kongressen kan vedtage loven alligevel, hvis to tredjedele i både Huset og Senatet stemmer for.'],
+    ['Hvem skal godkende præsidentens valg af højesteretsdommere?', 'Senatet', ['Repræsentanternes Hus', 'Delstaternes guvernører', 'Vicepræsidenten'], 'Præsidenten peger på en kandidat, og Senatet skal sige ja.'],
+    ['Hvor længe sidder en højesteretsdommer?', 'På livstid', ['I 8 år', 'I 12 år', 'Til næste præsidentvalg'], 'Dommerne kan blive, så længe de vil, og kan kun fjernes ved rigsretssag.'],
+    ['Hvad hedder det, når man tegner valgdistrikter, så det hjælper et bestemt parti?', 'Gerrymandering', ['Filibuster', 'Impeachment', 'Cloture'], 'Ordet kommer af guvernør Elbridge Gerry og et distrikt fra 1812, der lignede en salamander.'],
+    ['Hvilken institution kan erklære en lov for forfatningsstridig?', 'Højesteret', ['Senatet', 'Vicepræsidenten', 'Talmanden'], 'Domstolene kan underkende love og ordrer, der strider mod forfatningen.'],
+    ['Hvem anklager en præsident i en rigsretssag (impeachment)?', 'Repræsentanternes Hus', ['Senatet', 'Højesteret', 'Delstaternes guvernører'], 'Huset rejser anklagen med simpelt flertal. Derefter dømmer Senatet, hvor der skal to tredjedele til.'],
+    ['Hvor mange gange kan en præsident højst vælges?', '2', ['1', '3', 'Så mange gange man vil'], 'Grænsen står i den 22. tilføjelse til forfatningen fra 1951.'],
+    ['Hvilket ord bruges om, at USA er delt i delstater med egen magt under en fælles stat?', 'Føderalisme', ['Tredeling af magten', 'Valgmandskollegium', 'Cloture'], 'Forbundsstaten og de 50 delstater deler magten mellem sig.'],
+    ['Hvilke tre grene deler magten i USA?', 'Præsident, kongres og domstole', ['Præsident, guvernører og byråd', 'Hæren, politiet og domstolene', 'Senatet, Huset og vicepræsidenten'], 'Det kaldes tredeling af magten og står i forfatningens tre første artikler.']
+  ];
+  function qSystem() {
+    var q = pick(SYS);
+    return mk(q[0], q[1], shuffle(q[2]), q[3] + ' Læs mere under Præsident og kongres.');
+  }
   function quizStart() {
-    var gens = [qWinner, qWinner, qFirst, qFirst, qClosest, qPopLoser, qNever, qMajority, qThird, qTipping], qs = [], seen = {};
+    var gens = [qWinner, qFirst, qClosest, qPopLoser, qNever, qMajority, qThird, qTipping, qSystem, qSystem], qs = [], seen = {};
     gens.forEach(function (g) {
       var t = 0, q;
       do { q = g(); t++; } while ((!q || seen[q.q]) && t < 40);
